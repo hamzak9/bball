@@ -8,233 +8,291 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg:         #0c0d0f;
-  --surface:    #13151a;
-  --surface2:   #1a1d24;
-  --surface3:   #20232c;
-  --border:     #ffffff12;
-  --border-h:   #ffffff22;
-  --accent:     #f97316;
-  --accent-dim: #f9731618;
-  --accent-mid: #f9731640;
-  --green:      #22c55e;
-  --green-dim:  #22c55e18;
-  --blue:       #3b82f6;
-  --text:       #e8eaf0;
-  --muted:      #6b7280;
-  --subtle:     #9ca3af;
-  --mono:       'DM Mono', monospace;
-  --sans:       'Barlow', sans-serif;
-  --cond:       'Barlow Condensed', sans-serif;
+  --bg:#0c0d0f; --surface:#13151a; --surface2:#1a1d24; --surface3:#20232c;
+  --border:#ffffff12; --border-h:#ffffff22;
+  --accent:#f97316; --accent-dim:#f9731618; --accent-mid:#f9731640;
+  --green:#22c55e; --green-dim:#22c55e18;
+  --amber:#f59e0b; --amber-dim:#f59e0b18;
+  --red:#ef4444; --red-dim:#ef444418;
+  --blue:#3b82f6;
+  --text:#e8eaf0; --muted:#6b7280; --subtle:#9ca3af;
+  --mono:'DM Mono',monospace; --sans:'Barlow',sans-serif; --cond:'Barlow Condensed',sans-serif;
 }
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
+body::after{content:'';position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent) 30%,var(--accent) 70%,transparent);z-index:100;}
 
-html, body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+/* HEADER */
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--border);background:var(--bg);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:30px;height:30px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.logo-text{font-family:var(--cond);font-size:21px;font-weight:700;letter-spacing:.04em;}
+.logo-text span{color:var(--accent);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-badge{font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--border);padding:4px 10px;border-radius:4px;letter-spacing:.06em;}
+.btn-ghost{background:none;border:1px solid var(--border-h);color:var(--subtle);font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer;letter-spacing:.05em;transition:all .15s;align-items:center;gap:6px;display:none;}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-ghost.visible{display:flex;}
 
-body::before {
-  content: ''; position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 0; opacity: .6;
-}
-body::after {
-  content: ''; position: fixed; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent) 30%, var(--accent) 70%, transparent);
-  z-index: 100;
-}
+/* VIEW */
+.view{transition:opacity .35s,transform .35s;}
+.view.hidden{opacity:0;pointer-events:none;position:absolute;top:0;left:0;right:0;transform:translateY(10px);}
+.view.active{opacity:1;pointer-events:auto;position:relative;transform:translateY(0);}
 
-/* ── HEADER ──────────────────────────────────── */
-header {
-  position: relative; z-index: 10;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 32px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-}
-.logo { display: flex; align-items: center; gap: 10px; }
-.logo-icon { width: 30px; height: 30px; border-radius: 7px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 15px; }
-.logo-text { font-family: var(--cond); font-size: 21px; font-weight: 700; letter-spacing: .04em; }
-.logo-text span { color: var(--accent); }
-.header-right { display: flex; align-items: center; gap: 10px; }
-.header-badge { font-family: var(--mono); font-size: 10px; color: var(--muted); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; letter-spacing: .06em; }
-.btn-ghost { background: none; border: 1px solid var(--border-h); color: var(--subtle); font-family: var(--mono); font-size: 11px; padding: 5px 12px; border-radius: 5px; cursor: pointer; letter-spacing: .05em; transition: all .15s; align-items: center; gap: 6px; display: none; }
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
-.btn-ghost.visible { display: flex; }
+/* ═══ UPLOAD ═══ */
+#uploadView{padding:40px 32px 72px;max-width:1120px;margin:0 auto;}
+.session-kicker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:8px;}
+.session-title{font-family:var(--cond);font-size:34px;font-weight:600;margin-bottom:8px;}
+.session-subtitle{color:var(--muted);font-size:14px;line-height:1.6;max-width:500px;margin-bottom:28px;}
+.progress-row{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:10px;}
+.progress-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.06em;white-space:nowrap;}
+.progress-track{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.progress-count{font-family:var(--mono);font-size:13px;font-weight:500;min-width:32px;text-align:right;}
+.angles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.angle-card{border-radius:12px;border:1.5px solid var(--border);background:var(--surface);overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,background .2s;}
+.angle-card.drag-over{border-color:var(--accent);background:var(--accent-dim);}
+.angle-card.loaded{border-color:var(--green);}
+.card-accent{height:2px;background:var(--border);transition:background .3s;}
+.angle-card.loaded .card-accent{background:var(--green);}
+.angle-card.drag-over .card-accent{background:var(--accent);}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 16px 10px;}
+.card-angle-tag{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:3px;}
+.card-title{font-family:var(--cond);font-size:19px;font-weight:600;}
+.card-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--border-h);margin-top:4px;flex-shrink:0;transition:background .3s;}
+.angle-card.loaded .status-dot{background:var(--green);}
+.court-diagram{margin:0 16px 12px;border-radius:7px;overflow:hidden;background:var(--surface2);border:1px solid var(--border);}
+.drop-zone{margin:0 16px 16px;border:1.5px dashed var(--border-h);border-radius:8px;padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:border-color .2s,background .2s;text-align:center;}
+.drop-zone:hover{border-color:var(--accent);background:var(--accent-dim);}
+.angle-card.loaded .drop-zone{display:none;}
+.drop-icon{width:34px;height:34px;border-radius:7px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.drop-zone:hover .drop-icon{background:var(--accent-mid);}
+.drop-icon svg{width:16px;height:16px;stroke:var(--muted);}
+.drop-zone:hover .drop-icon svg{stroke:var(--accent);}
+.drop-label{font-size:12px;font-weight:500;color:var(--subtle);}
+.drop-hint{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.04em;}
+.video-preview{display:none;margin:0 16px 16px;border-radius:8px;overflow:hidden;position:relative;background:#000;border:1px solid var(--border);}
+.angle-card.loaded .video-preview{display:block;}
+.video-preview video{width:100%;display:block;max-height:148px;object-fit:cover;}
+.video-overlay-bar{position:absolute;bottom:0;left:0;right:0;padding:7px 10px;background:linear-gradient(transparent,rgba(0,0,0,.85));display:flex;align-items:center;justify-content:space-between;}
+.video-filename{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.5);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.video-remove{background:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.5);font-size:9px;font-family:var(--mono);padding:2px 7px;border-radius:3px;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
+.video-remove:hover{background:rgba(255,255,255,.1);color:#fff;}
+.analyze-row{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:12px;gap:16px;margin-bottom:18px;}
+.analyze-info{font-size:13px;color:var(--muted);line-height:1.5;}
+.analyze-info strong{color:var(--subtle);font-weight:500;}
+.btn-analyze{display:flex;align-items:center;gap:8px;padding:12px 26px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:var(--cond);font-size:16px;font-weight:600;letter-spacing:.06em;cursor:pointer;transition:all .2s;white-space:nowrap;opacity:.28;pointer-events:none;}
+.btn-analyze.active{opacity:1;pointer-events:auto;}
+.btn-analyze.active:hover{background:#ea6512;transform:translateY(-1px);}
+.btn-analyze svg{width:17px;height:17px;stroke:#fff;}
+.tips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.tip-card{padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;display:flex;gap:10px;}
+.tip-num{font-family:var(--mono);font-size:10px;color:var(--accent);margin-top:1px;flex-shrink:0;}
+.tip-text{font-size:11px;color:var(--muted);line-height:1.5;}
+.tip-text strong{color:var(--subtle);font-weight:500;display:block;margin-bottom:2px;}
 
-/* ── VIEW SWITCHING ──────────────────────────── */
-.view { transition: opacity .35s, transform .35s; }
-.view.hidden { opacity: 0; pointer-events: none; position: absolute; top: 0; left: 0; right: 0; transform: translateY(10px); }
-.view.active { opacity: 1; pointer-events: auto; position: relative; transform: translateY(0); }
+/* ═══ PLAYER ═══ */
+#playerView{display:flex;flex-direction:column;height:calc(100vh - 61px);overflow:hidden;}
+.player-topbar{display:flex;align-items:center;justify-content:space-between;padding:9px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;gap:12px;}
+.player-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.angle-pill{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:4px;border:1px solid var(--border-h);color:var(--muted);white-space:nowrap;max-width:180px;overflow:hidden;text-overflow:ellipsis;}
+.angle-pill.ok{border-color:var(--green);color:var(--green);}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.kbd-hints{display:flex;gap:10px;}
+.kbd-hint{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+.kbd{font-family:var(--mono);font-size:10px;padding:2px 5px;background:var(--surface2);border:1px solid var(--border-h);border-radius:3px;color:var(--subtle);}
+.btn-run-analysis{display:flex;align-items:center;gap:7px;padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-family:var(--cond);font-size:14px;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.btn-run-analysis:hover{background:#ea6512;transform:translateY(-1px);}
+.btn-run-analysis svg{width:14px;height:14px;stroke:#fff;flex-shrink:0;}
+.videos-area{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#000;overflow:hidden;min-height:0;}
+.videos-area.one-panel{grid-template-columns:1fr;}
+.videos-area.one-panel .video-panel{display:none;}
+.videos-area.one-panel .video-panel.solo{display:flex;}
+.video-panel{position:relative;background:#06080a;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.panel-vid{width:100%;height:100%;object-fit:contain;display:block;}
+.panel-top-bar{position:absolute;top:0;left:0;right:0;padding:8px 12px;background:linear-gradient(rgba(0,0,0,.65),transparent);display:flex;align-items:flex-start;justify-content:space-between;z-index:5;pointer-events:none;}
+.panel-meta{pointer-events:none;}
+.panel-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:1px;}
+.panel-name{font-family:var(--cond);font-size:17px;font-weight:600;color:#fff;}
+.panel-file{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.zoom-btn{pointer-events:auto;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);width:26px;height:26px;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:6;transition:all .15s;flex-shrink:0;}
+.zoom-btn:hover{background:rgba(255,255,255,.15);color:#fff;}
+.zoom-btn svg{width:13px;height:13px;}
+.zoom-btn.zoomed{background:var(--accent);border-color:var(--accent);color:#fff;}
+.panel-time{position:absolute;bottom:8px;right:10px;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.35);z-index:5;pointer-events:none;}
+.panel-flash{position:absolute;inset:0;background:rgba(249,115,22,.07);opacity:0;pointer-events:none;transition:opacity .12s;z-index:4;}
+.panel-flash.on{opacity:1;}
+.controls-bar{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:10px 20px 14px;}
+.scrubber-row{display:flex;align-items:center;gap:12px;padding-bottom:10px;}
+.time-left{font-family:var(--mono);font-size:11px;color:var(--subtle);min-width:52px;}
+.time-right{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:52px;text-align:right;}
+.scrubber-wrap{flex:1;height:20px;display:flex;align-items:center;cursor:pointer;position:relative;}
+.scrubber-track{width:100%;height:3px;background:var(--surface3);border-radius:2px;position:relative;}
+.scrubber-buf{position:absolute;top:0;left:0;height:100%;background:var(--border-h);border-radius:2px;pointer-events:none;}
+.scrubber-prog{position:absolute;top:0;left:0;height:100%;background:var(--accent);border-radius:2px;pointer-events:none;}
+.scrubber-thumb{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid #fff;transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--accent-mid);pointer-events:none;transition:transform .1s;}
+.scrubber-wrap:hover .scrubber-thumb{transform:translate(-50%,-50%) scale(1.25);}
+.btns-row{display:flex;align-items:center;gap:7px;}
+.ctrl-btn{background:none;border:1px solid var(--border-h);color:var(--subtle);width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ctrl-btn svg{width:15px;height:15px;}
+.play-btn{width:44px;height:44px;border-radius:9px;border-color:var(--accent);color:var(--accent);}
+.play-btn svg{width:20px;height:20px;}
+.play-btn.playing{background:var(--accent);color:#fff;border-color:var(--accent);}
+.play-btn.playing:hover{background:#ea6512;}
+.ctrl-divider{width:1px;height:22px;background:var(--border);flex-shrink:0;}
+.speed-group{display:flex;border:1px solid var(--border-h);border-radius:6px;overflow:hidden;}
+.speed-btn{background:none;border:none;border-right:1px solid var(--border-h);color:var(--muted);font-family:var(--mono);font-size:10px;padding:7px 10px;cursor:pointer;transition:all .15s;letter-spacing:.03em;white-space:nowrap;}
+.speed-btn:last-child{border-right:none;}
+.speed-btn:hover{color:var(--accent);background:var(--accent-dim);}
+.speed-btn.on{background:var(--accent);color:#fff;}
+.frame-badge{font-family:var(--mono);font-size:10px;color:var(--muted);padding:6px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;white-space:nowrap;}
+.ctrl-spacer{flex:1;}
+.loop-btn.on{background:var(--surface2);border-color:var(--green);color:var(--green);}
 
-/* ════════════════════════════════════════════
-   UPLOAD VIEW
-════════════════════════════════════════════ */
-#uploadView { padding: 40px 32px 72px; max-width: 1120px; margin: 0 auto; }
+/* ═══ ANALYSIS LOADING ═══ */
+#analysisView{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 61px);padding:40px 32px;}
+.analysis-wrap{width:100%;max-width:480px;}
+.analysis-title{font-family:var(--cond);font-size:28px;font-weight:600;margin-bottom:6px;}
+.analysis-sub{font-size:13px;color:var(--muted);margin-bottom:32px;}
+.analysis-steps{display:flex;flex-direction:column;gap:4px;margin-bottom:28px;}
+.analysis-step{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);transition:all .3s;}
+.analysis-step.active{border-color:var(--accent);background:var(--accent-dim);}
+.analysis-step.done{border-color:var(--green);background:var(--green-dim);}
+.step-icon{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border-h);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.analysis-step.active .step-icon{border-color:var(--accent);animation:spin .7s linear infinite;}
+.analysis-step.done .step-icon{border-color:var(--green);background:var(--green-dim);}
+.step-icon svg{width:11px;height:11px;}
+.analysis-step.active .step-icon svg{stroke:var(--accent);}
+.analysis-step.done .step-icon svg{stroke:var(--green);}
+.step-label{font-size:13px;color:var(--muted);transition:color .3s;}
+.analysis-step.active .step-label{color:var(--text);}
+.analysis-step.done .step-label{color:var(--subtle);}
+.a-prog-track{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;}
+.a-prog-fill{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-.session-kicker { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
-.session-title  { font-family: var(--cond); font-size: 34px; font-weight: 600; margin-bottom: 8px; }
-.session-subtitle { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 500px; margin-bottom: 28px; }
+/* ═══ REPORT ═══ */
+#reportView{padding:36px 32px 80px;max-width:960px;margin:0 auto;position:relative;z-index:1;}
+.report-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:26px;gap:20px;flex-wrap:wrap;}
+.report-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;}
+.report-title{font-family:var(--cond);font-size:30px;font-weight:600;line-height:1.1;margin-bottom:4px;}
+.report-date{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.report-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.btn-secondary{display:flex;align-items:center;gap:6px;padding:9px 16px;background:none;border:1px solid var(--border-h);color:var(--subtle);font-family:var(--mono);font-size:11px;letter-spacing:.05em;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-secondary svg{width:13px;height:13px;}
+.btn-primary-sm{display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--accent);border:none;color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.05em;border-radius:7px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-primary-sm:hover{background:#ea6512;}
+.btn-primary-sm svg{width:13px;height:13px;stroke:#fff;}
 
-.progress-row { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; padding: 12px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
-.progress-label { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .06em; white-space: nowrap; }
-.progress-track { flex: 1; height: 3px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
-.progress-fill  { height: 100%; width: 0%; background: var(--accent); border-radius: 2px; transition: width .5s cubic-bezier(.4,0,.2,1); }
-.progress-count { font-family: var(--mono); font-size: 13px; font-weight: 500; min-width: 32px; text-align: right; }
+/* score hero */
+.score-hero{display:grid;grid-template-columns:auto 1fr;gap:0;align-items:stretch;background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden;}
+.score-grade-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:24px 28px;border-right:1px solid var(--border);}
+.score-grade{font-family:var(--cond);font-size:72px;font-weight:700;line-height:1;letter-spacing:-.02em;}
+.score-grade.A{color:var(--green);}
+.score-grade.B{color:#84cc16;}
+.score-grade.C{color:var(--amber);}
+.score-grade.D{color:var(--red);}
+.score-grade-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.score-details{padding:24px 28px;}
+.score-number{font-family:var(--cond);font-size:40px;font-weight:600;line-height:1;margin-bottom:4px;}
+.score-number span{font-size:18px;color:var(--muted);font-weight:400;}
+.score-headline{font-size:13px;color:var(--subtle);line-height:1.6;margin-bottom:14px;max-width:420px;}
+.score-bars{display:flex;flex-direction:column;gap:6px;}
+.score-bar-row{display:flex;align-items:center;gap:10px;}
+.score-bar-label{font-family:var(--mono);font-size:10px;color:var(--muted);width:120px;flex-shrink:0;letter-spacing:.03em;}
+.score-bar-track{flex:1;height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;max-width:180px;}
+.score-bar-fill{height:100%;border-radius:2px;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.score-bar-val{font-family:var(--mono);font-size:10px;color:var(--subtle);min-width:24px;text-align:right;}
 
-.angles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+/* metrics */
+.section-label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:22px 0 12px;}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.metric-card:hover{border-color:var(--border-h);}
+.metric-top-line{position:absolute;top:0;left:0;right:0;height:2px;}
+.metric-score-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px;}
+.metric-score{font-family:var(--cond);font-size:36px;font-weight:600;line-height:1;}
+.metric-score-max{font-size:14px;color:var(--muted);font-weight:400;}
+.metric-badge{font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:4px;letter-spacing:.06em;font-weight:500;margin-bottom:3px;}
+.badge-great{background:var(--green-dim);color:var(--green);}
+.badge-ok{background:var(--amber-dim);color:var(--amber);}
+.badge-fix{background:var(--red-dim);color:var(--red);}
+.metric-name{font-family:var(--cond);font-size:15px;font-weight:600;margin-bottom:3px;}
+.metric-value{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:7px;}
+.metric-bar-track{height:3px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-bottom:9px;}
+.metric-bar-fill{height:100%;border-radius:2px;width:0%;transition:width 1.4s cubic-bezier(.4,0,.2,1);}
+.metric-insight{font-size:11px;color:var(--muted);line-height:1.5;}
 
-.angle-card { border-radius: 12px; border: 1.5px solid var(--border); background: var(--surface); overflow: hidden; display: flex; flex-direction: column; transition: border-color .2s, background .2s; }
-.angle-card.drag-over { border-color: var(--accent); background: var(--accent-dim); }
-.angle-card.loaded    { border-color: var(--green); }
-.card-accent { height: 2px; background: var(--border); transition: background .3s; }
-.angle-card.loaded    .card-accent { background: var(--green); }
-.angle-card.drag-over .card-accent { background: var(--accent); }
+/* arc canvas */
+.arc-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.arc-section-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.arc-section-title{font-family:var(--cond);font-size:17px;font-weight:600;}
+.arc-section-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.arc-legend{display:flex;gap:14px;}
+.arc-legend-item{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:var(--muted);}
+.arc-legend-line{width:20px;height:2px;border-radius:1px;}
+#arcCanvas{display:block;width:100%;height:200px;}
 
-.card-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 14px 16px 10px; }
-.card-angle-tag { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--muted); text-transform: uppercase; margin-bottom: 3px; }
-.card-title { font-family: var(--cond); font-size: 19px; font-weight: 600; }
-.card-desc  { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
-.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border-h); margin-top: 4px; flex-shrink: 0; transition: background .3s; }
-.angle-card.loaded .status-dot { background: var(--green); }
+/* drill */
+.drill-card{background:var(--surface);border:1.5px solid var(--accent);border-radius:14px;overflow:hidden;}
+.drill-card-head{background:var(--accent);padding:14px 20px;display:flex;align-items:center;gap:10px;}
+.drill-priority-tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;background:rgba(0,0,0,.25);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.drill-card-title{font-family:var(--cond);font-size:18px;font-weight:700;color:#fff;}
+.drill-body{padding:20px;}
+.drill-issue{font-size:13px;color:var(--subtle);line-height:1.6;margin-bottom:16px;padding:12px 14px;background:var(--accent-dim);border-radius:8px;border-left:3px solid var(--accent);}
+.drill-ex-title{font-family:var(--cond);font-size:18px;font-weight:600;margin-bottom:4px;}
+.drill-ex-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.drill-steps{display:flex;flex-direction:column;gap:8px;}
+.drill-step{display:flex;gap:12px;align-items:flex-start;padding:10px 14px;background:var(--surface2);border-radius:8px;}
+.drill-step-num{font-family:var(--mono);font-size:11px;color:var(--accent);flex-shrink:0;margin-top:1px;}
+.drill-step-txt{font-size:13px;color:var(--subtle);line-height:1.5;}
+.drill-reps{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+.drill-rep-badge{font-family:var(--mono);font-size:11px;padding:6px 12px;background:var(--surface2);border:1px solid var(--border-h);border-radius:6px;color:var(--subtle);}
 
-.court-diagram { margin: 0 16px 12px; border-radius: 7px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); }
+/* shot table */
+.shot-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.shot-table-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.shot-table-title{font-family:var(--cond);font-size:17px;font-weight:600;}
+.shot-table-sub{font-size:12px;color:var(--muted);}
+table{width:100%;border-collapse:collapse;}
+thead tr{border-bottom:1px solid var(--border);}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.07em;color:var(--muted);text-transform:uppercase;padding:10px 20px;text-align:left;white-space:nowrap;}
+th:not(:first-child){text-align:center;}
+td{padding:10px 20px;font-size:13px;border-bottom:1px solid var(--border);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
+.shot-num{font-family:var(--mono);font-size:11px;color:var(--muted);}
+.arc-low{color:var(--red);}
+.arc-high{color:var(--green);}
+.drift-left{color:var(--blue);}
+.drift-right{color:var(--amber);}
+.b-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;}
+.report-section{margin-top:20px;}
 
-.drop-zone { margin: 0 16px 16px; border: 1.5px dashed var(--border-h); border-radius: 8px; padding: 20px 12px; display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; transition: border-color .2s, background .2s; text-align: center; }
-.drop-zone:hover { border-color: var(--accent); background: var(--accent-dim); }
-.angle-card.loaded .drop-zone { display: none; }
-.drop-icon { width: 34px; height: 34px; border-radius: 7px; background: var(--surface2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; transition: background .2s; }
-.drop-zone:hover .drop-icon { background: var(--accent-mid); }
-.drop-icon svg { width: 16px; height: 16px; stroke: var(--muted); }
-.drop-zone:hover .drop-icon svg { stroke: var(--accent); }
-.drop-label { font-size: 12px; font-weight: 500; color: var(--subtle); }
-.drop-hint  { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+/* toast */
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);padding:10px 18px;border-radius:7px;font-size:12px;color:var(--text);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+.file-input{display:none;}
 
-.video-preview { display: none; margin: 0 16px 16px; border-radius: 8px; overflow: hidden; position: relative; background: #000; border: 1px solid var(--border); }
-.angle-card.loaded .video-preview { display: block; }
-.video-preview video { width: 100%; display: block; max-height: 148px; object-fit: cover; }
-.video-overlay-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 7px 10px; background: linear-gradient(transparent, rgba(0,0,0,.85)); display: flex; align-items: center; justify-content: space-between; }
-.video-filename { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.5); max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.video-remove { background: none; border: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.5); font-size: 9px; font-family: var(--mono); padding: 2px 7px; border-radius: 3px; cursor: pointer; transition: all .15s; letter-spacing: .04em; }
-.video-remove:hover { background: rgba(255,255,255,.1); color: #fff; }
-
-.analyze-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; gap: 16px; margin-bottom: 18px; }
-.analyze-info { font-size: 13px; color: var(--muted); line-height: 1.5; }
-.analyze-info strong { color: var(--subtle); font-weight: 500; }
-.btn-analyze { display: flex; align-items: center; gap: 8px; padding: 12px 26px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-family: var(--cond); font-size: 16px; font-weight: 600; letter-spacing: .06em; cursor: pointer; transition: all .2s; white-space: nowrap; opacity: .28; pointer-events: none; }
-.btn-analyze.active { opacity: 1; pointer-events: auto; }
-.btn-analyze.active:hover { background: #ea6512; transform: translateY(-1px); }
-.btn-analyze svg { width: 17px; height: 17px; stroke: #fff; }
-
-.tips-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.tip-card { padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; display: flex; gap: 10px; }
-.tip-num  { font-family: var(--mono); font-size: 10px; color: var(--accent); margin-top: 1px; flex-shrink: 0; }
-.tip-text { font-size: 11px; color: var(--muted); line-height: 1.5; }
-.tip-text strong { color: var(--subtle); font-weight: 500; display: block; margin-bottom: 2px; }
-
-/* ════════════════════════════════════════════
-   PLAYER VIEW
-════════════════════════════════════════════ */
-#playerView { display: flex; flex-direction: column; height: calc(100vh - 61px); overflow: hidden; }
-
-/* top info bar */
-.player-topbar { display: flex; align-items: center; justify-content: space-between; padding: 9px 20px; border-bottom: 1px solid var(--border); background: var(--surface); flex-shrink: 0; gap: 12px; }
-.player-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.angle-pill { font-family: var(--mono); font-size: 10px; padding: 3px 9px; border-radius: 4px; border: 1px solid var(--border-h); color: var(--muted); white-space: nowrap; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
-.angle-pill.ok { border-color: var(--green); color: var(--green); }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.kbd-hints { display: flex; gap: 10px; }
-.kbd-hint { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); }
-.kbd { font-family: var(--mono); font-size: 10px; padding: 2px 5px; background: var(--surface2); border: 1px solid var(--border-h); border-radius: 3px; color: var(--subtle); }
-
-/* 3-panel grid */
-.videos-area { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #000; overflow: hidden; min-height: 0; }
-.videos-area.one-panel { grid-template-columns: 1fr; }
-.videos-area.one-panel .video-panel { display: none; }
-.videos-area.one-panel .video-panel.solo { display: flex; }
-
-.video-panel { position: relative; background: #06080a; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: default; }
-
-.panel-vid { width: 100%; height: 100%; object-fit: contain; display: block; }
-
-/* top overlay */
-.panel-top-bar { position: absolute; top: 0; left: 0; right: 0; padding: 8px 12px; background: linear-gradient(rgba(0,0,0,.65), transparent); display: flex; align-items: flex-start; justify-content: space-between; z-index: 5; pointer-events: none; }
-.panel-meta { pointer-events: none; }
-.panel-tag  { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: rgba(255,255,255,.4); text-transform: uppercase; margin-bottom: 1px; }
-.panel-name { font-family: var(--cond); font-size: 17px; font-weight: 600; color: #fff; }
-.panel-file { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.3); max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-/* zoom btn */
-.zoom-btn { pointer-events: auto; background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.5); width: 26px; height: 26px; border-radius: 5px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 6; transition: all .15s; flex-shrink: 0; }
-.zoom-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
-.zoom-btn svg { width: 13px; height: 13px; }
-.zoom-btn.zoomed { background: var(--accent); border-color: var(--accent); color: #fff; }
-
-/* bottom time */
-.panel-time { position: absolute; bottom: 8px; right: 10px; font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,.35); z-index: 5; pointer-events: none; }
-
-/* sync flash on frame step */
-.panel-flash { position: absolute; inset: 0; background: rgba(249,115,22,.07); opacity: 0; pointer-events: none; transition: opacity .12s; z-index: 4; }
-.panel-flash.on { opacity: 1; }
-
-/* ── CONTROLS BAR ────────────────────────────── */
-.controls-bar { flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); padding: 10px 20px 14px; }
-
-.scrubber-row { display: flex; align-items: center; gap: 12px; padding-bottom: 10px; }
-.time-left  { font-family: var(--mono); font-size: 11px; color: var(--subtle); min-width: 52px; }
-.time-right { font-family: var(--mono); font-size: 11px; color: var(--muted); min-width: 52px; text-align: right; }
-
-.scrubber-wrap { flex: 1; height: 20px; display: flex; align-items: center; cursor: pointer; position: relative; }
-.scrubber-track { width: 100%; height: 3px; background: var(--surface3); border-radius: 2px; position: relative; }
-.scrubber-buf  { position: absolute; top: 0; left: 0; height: 100%; background: var(--border-h); border-radius: 2px; pointer-events: none; }
-.scrubber-prog { position: absolute; top: 0; left: 0; height: 100%; background: var(--accent); border-radius: 2px; pointer-events: none; }
-.scrubber-thumb { position: absolute; top: 50%; width: 13px; height: 13px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; transform: translate(-50%,-50%); box-shadow: 0 0 0 3px var(--accent-mid); pointer-events: none; transition: transform .1s; }
-.scrubber-wrap:hover .scrubber-thumb { transform: translate(-50%,-50%) scale(1.25); }
-
-.btns-row { display: flex; align-items: center; gap: 7px; }
-
-.ctrl-btn { background: none; border: 1px solid var(--border-h); color: var(--subtle); width: 36px; height: 36px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all .15s; flex-shrink: 0; }
-.ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
-.ctrl-btn svg { width: 15px; height: 15px; }
-.ctrl-btn.active-state { background: var(--surface2); border-color: var(--accent); color: var(--accent); }
-
-.play-btn { width: 44px; height: 44px; border-radius: 9px; border-color: var(--accent); color: var(--accent); }
-.play-btn svg { width: 20px; height: 20px; }
-.play-btn.playing { background: var(--accent); color: #fff; border-color: var(--accent); }
-.play-btn.playing:hover { background: #ea6512; }
-
-.ctrl-divider { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
-
-.speed-group { display: flex; border: 1px solid var(--border-h); border-radius: 6px; overflow: hidden; }
-.speed-btn { background: none; border: none; border-right: 1px solid var(--border-h); color: var(--muted); font-family: var(--mono); font-size: 10px; padding: 7px 10px; cursor: pointer; transition: all .15s; letter-spacing: .03em; white-space: nowrap; }
-.speed-btn:last-child { border-right: none; }
-.speed-btn:hover { color: var(--accent); background: var(--accent-dim); }
-.speed-btn.on { background: var(--accent); color: #fff; }
-
-.frame-badge { font-family: var(--mono); font-size: 10px; color: var(--muted); padding: 6px 10px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; white-space: nowrap; }
-.ctrl-spacer { flex: 1; }
-
-.loop-btn.on { background: var(--surface2); border-color: var(--green); color: var(--green); }
-
-/* ── TOAST ───────────────────────────────────── */
-#toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--surface2); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 10px 18px; border-radius: 7px; font-size: 12px; color: var(--text); z-index: 9999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; }
-#toast.show { transform: translateX(-50%) translateY(0); }
-
-.file-input { display: none; }
-
-@media (max-width: 900px) {
-  header { padding: 14px 18px; }
-  #uploadView { padding: 28px 18px 60px; }
-  .angles-grid, .tips-grid { grid-template-columns: 1fr; }
-  .analyze-row { flex-direction: column; }
-  .btn-analyze { justify-content: center; }
-  .videos-area { grid-template-columns: 1fr; grid-template-rows: repeat(3, 1fr); }
-  .kbd-hints { display: none; }
+@media(max-width:900px){
+  header,#uploadView,#reportView{padding-left:18px;padding-right:18px;}
+  .angles-grid,.tips-grid,.metrics-grid{grid-template-columns:1fr;}
+  .analyze-row,.report-header{flex-direction:column;}
+  .btn-analyze{justify-content:center;}
+  .videos-area{grid-template-columns:1fr;grid-template-rows:repeat(3,1fr);}
+  .kbd-hints{display:none;}
+  .score-hero{grid-template-columns:1fr;}
+  .score-grade-wrap{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;gap:12px;justify-content:flex-start;padding-bottom:16px;}
 }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-icon">🏀</div>
@@ -242,705 +300,446 @@ header {
   </div>
   <div class="header-right">
     <div class="header-badge" id="headerBadge">F1 — VIDEO CAPTURE</div>
-    <button class="btn-ghost" id="btnBack" onclick="goToUpload()">
+    <button class="btn-ghost" id="btnBack">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
       BACK
     </button>
   </div>
 </header>
 
-<!-- ════════════════════════════════
-     VIEW 1: UPLOAD
-════════════════════════════════ -->
+<!-- ═══ UPLOAD ═══ -->
 <div id="uploadView" class="view active">
-
   <p class="session-kicker">New Session</p>
   <h1 class="session-title">Upload Your Shot Footage</h1>
-  <p class="session-subtitle">Record 10+ shots from each of the 3 required angles. Position your phone as shown in each diagram for accurate biomechanical analysis.</p>
-
+  <p class="session-subtitle">Record 10+ shots from each of the 3 required angles. Position your phone as shown in each diagram.</p>
   <div class="progress-row">
     <span class="progress-label">ANGLES LOADED</span>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <span class="progress-count" id="progressCount">0 / 3</span>
   </div>
-
   <div class="angles-grid">
-
     <!-- FRONT -->
     <div class="angle-card" id="card-front">
       <div class="card-accent"></div>
-      <div class="card-head">
-        <div>
-          <div class="card-angle-tag">Angle 01</div>
-          <div class="card-title">Front View</div>
-          <div class="card-desc">Straight-on to the basket<br>~12 ft behind shooter</div>
-        </div>
-        <div class="status-dot"></div>
-      </div>
-      <div class="court-diagram">
-        <svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;">
-          <rect width="220" height="108" fill="#1a1d24"/>
-          <rect x="65" y="10" width="90" height="58" fill="none" stroke="#ffffff10" stroke-width="1"/>
-          <rect x="80" y="10" width="60" height="46" fill="none" stroke="#ffffff13" stroke-width="1"/>
-          <rect x="98" y="7" width="24" height="4" rx="1" fill="none" stroke="#f97316" stroke-width="1" opacity=".5"/>
-          <circle cx="110" cy="14" r="6" fill="none" stroke="#f97316" stroke-width="1.2"/>
-          <circle cx="110" cy="73" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/>
-          <line x1="110" y1="78" x2="110" y2="91" stroke="#e8eaf0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="110" y1="82" x2="100" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="110" y1="82" x2="121" y2="78" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="123" cy="75" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/>
-          <line x1="110" y1="91" x2="104" y2="100" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="110" y1="91" x2="116" y2="100" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <rect x="98" y="88" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/>
-          <circle cx="110" cy="95" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/>
-          <circle cx="110" cy="95" r="1.5" fill="#f97316"/>
-          <line x1="110" y1="88" x2="110" y2="80" stroke="#f97316" stroke-width=".8" stroke-dasharray="2 2" opacity=".4"/>
-          <text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text>
-        </svg>
-      </div>
-      <div class="drop-zone" id="zone-front">
-        <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div>
-        <span class="drop-label">Drop video or click</span>
-        <span class="drop-hint">MP4 · MOV · 1080p recommended</span>
-      </div>
-      <div class="video-preview" id="preview-front">
-        <video id="vid-front-thumb" muted playsinline></video>
-        <div class="video-overlay-bar">
-          <span class="video-filename" id="fname-front"></span>
-          <button class="video-remove" onclick="removeVideo('front')">REMOVE</button>
-        </div>
-      </div>
+      <div class="card-head"><div><div class="card-angle-tag">Angle 01</div><div class="card-title">Front View</div><div class="card-desc">Straight-on to basket<br>~12 ft behind shooter</div></div><div class="status-dot"></div></div>
+      <div class="court-diagram"><svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;"><rect width="220" height="108" fill="#1a1d24"/><rect x="65" y="10" width="90" height="58" fill="none" stroke="#ffffff10" stroke-width="1"/><rect x="80" y="10" width="60" height="46" fill="none" stroke="#ffffff13" stroke-width="1"/><rect x="98" y="7" width="24" height="4" rx="1" fill="none" stroke="#f97316" stroke-width="1" opacity=".5"/><circle cx="110" cy="14" r="6" fill="none" stroke="#f97316" stroke-width="1.2"/><circle cx="110" cy="73" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/><line x1="110" y1="78" x2="110" y2="91" stroke="#e8eaf0" stroke-width="2.5" stroke-linecap="round"/><line x1="110" y1="82" x2="100" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="110" y1="82" x2="121" y2="78" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><circle cx="123" cy="75" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/><line x1="110" y1="91" x2="104" y2="100" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="110" y1="91" x2="116" y2="100" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><rect x="98" y="88" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/><circle cx="110" cy="95" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/><circle cx="110" cy="95" r="1.5" fill="#f97316"/><text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text></svg></div>
+      <div class="drop-zone" id="zone-front"><div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div><span class="drop-label">Drop video or click</span><span class="drop-hint">MP4 · MOV · 1080p</span></div>
+      <div class="video-preview" id="preview-front"><video id="vid-front-thumb" muted playsinline></video><div class="video-overlay-bar"><span class="video-filename" id="fname-front"></span><button class="video-remove" onclick="removeVideo('front')">REMOVE</button></div></div>
       <input type="file" accept="video/*" class="file-input" id="file-front">
     </div>
-
     <!-- SIDE -->
     <div class="angle-card" id="card-side">
       <div class="card-accent"></div>
-      <div class="card-head">
-        <div>
-          <div class="card-angle-tag">Angle 02</div>
-          <div class="card-title">Side View</div>
-          <div class="card-desc">90° to shooter's right<br>~10 ft from body</div>
-        </div>
-        <div class="status-dot"></div>
-      </div>
-      <div class="court-diagram">
-        <svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;">
-          <rect width="220" height="108" fill="#1a1d24"/>
-          <line x1="10" y1="70" x2="210" y2="70" stroke="#ffffff10" stroke-width="1"/>
-          <rect x="100" y="18" width="20" height="3" rx="1" fill="none" stroke="#f97316" stroke-width="1.2" opacity=".7"/>
-          <line x1="110" y1="21" x2="110" y2="28" stroke="#f97316" stroke-width="1" opacity=".5"/>
-          <line x1="110" y1="28" x2="100" y2="28" stroke="#f97316" stroke-width="1" opacity=".5"/>
-          <circle cx="100" cy="28" r="2" fill="#f97316" opacity=".8"/>
-          <circle cx="58" cy="49" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/>
-          <line x1="58" y1="54" x2="58" y2="66" stroke="#e8eaf0" stroke-width="2.5" stroke-linecap="round"/>
-          <line x1="58" y1="58" x2="69" y2="46" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="71" cy="44" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/>
-          <line x1="58" y1="58" x2="50" y2="63" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="58" y1="66" x2="52" y2="74" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="58" y1="66" x2="64" y2="74" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <path d="M71 44 Q86 18 100 28" fill="none" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/>
-          <rect x="150" y="61" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/>
-          <circle cx="162" cy="68" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/>
-          <circle cx="162" cy="68" r="1.5" fill="#f97316"/>
-          <line x1="150" y1="68" x2="72" y2="68" stroke="#f97316" stroke-width=".8" stroke-dasharray="2 2" opacity=".4"/>
-          <text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text>
-        </svg>
-      </div>
-      <div class="drop-zone" id="zone-side">
-        <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div>
-        <span class="drop-label">Drop video or click</span>
-        <span class="drop-hint">MP4 · MOV · 1080p recommended</span>
-      </div>
-      <div class="video-preview" id="preview-side">
-        <video id="vid-side-thumb" muted playsinline></video>
-        <div class="video-overlay-bar">
-          <span class="video-filename" id="fname-side"></span>
-          <button class="video-remove" onclick="removeVideo('side')">REMOVE</button>
-        </div>
-      </div>
+      <div class="card-head"><div><div class="card-angle-tag">Angle 02</div><div class="card-title">Side View</div><div class="card-desc">90° to shooter's right<br>~10 ft from body</div></div><div class="status-dot"></div></div>
+      <div class="court-diagram"><svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;"><rect width="220" height="108" fill="#1a1d24"/><line x1="10" y1="70" x2="210" y2="70" stroke="#ffffff10" stroke-width="1"/><rect x="100" y="18" width="20" height="3" rx="1" fill="none" stroke="#f97316" stroke-width="1.2" opacity=".7"/><line x1="110" y1="21" x2="110" y2="28" stroke="#f97316" stroke-width="1" opacity=".5"/><line x1="110" y1="28" x2="100" y2="28" stroke="#f97316" stroke-width="1" opacity=".5"/><circle cx="100" cy="28" r="2" fill="#f97316" opacity=".8"/><circle cx="58" cy="49" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/><line x1="58" y1="54" x2="58" y2="66" stroke="#e8eaf0" stroke-width="2.5" stroke-linecap="round"/><line x1="58" y1="58" x2="69" y2="46" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><circle cx="71" cy="44" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/><line x1="58" y1="58" x2="50" y2="63" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="58" y1="66" x2="52" y2="74" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="58" y1="66" x2="64" y2="74" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><path d="M71 44 Q86 18 100 28" fill="none" stroke="#f97316" stroke-width="1" stroke-dasharray="3 2" opacity=".5"/><rect x="150" y="61" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/><circle cx="162" cy="68" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/><circle cx="162" cy="68" r="1.5" fill="#f97316"/><text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text></svg></div>
+      <div class="drop-zone" id="zone-side"><div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div><span class="drop-label">Drop video or click</span><span class="drop-hint">MP4 · MOV · 1080p</span></div>
+      <div class="video-preview" id="preview-side"><video id="vid-side-thumb" muted playsinline></video><div class="video-overlay-bar"><span class="video-filename" id="fname-side"></span><button class="video-remove" onclick="removeVideo('side')">REMOVE</button></div></div>
       <input type="file" accept="video/*" class="file-input" id="file-side">
     </div>
-
-    <!-- REAR 45° -->
+    <!-- REAR -->
     <div class="angle-card" id="card-rear">
       <div class="card-accent"></div>
-      <div class="card-head">
-        <div>
-          <div class="card-angle-tag">Angle 03</div>
-          <div class="card-title">Rear 45°</div>
-          <div class="card-desc">Behind &amp; offset 45° right<br>~12 ft from shooter</div>
-        </div>
-        <div class="status-dot"></div>
-      </div>
-      <div class="court-diagram">
-        <svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;">
-          <rect width="220" height="108" fill="#1a1d24"/>
-          <line x1="30" y1="88" x2="110" y2="20" stroke="#ffffff10" stroke-width="1"/>
-          <line x1="190" y1="88" x2="110" y2="20" stroke="#ffffff10" stroke-width="1"/>
-          <line x1="30" y1="88" x2="190" y2="88" stroke="#ffffff10" stroke-width="1"/>
-          <circle cx="110" cy="22" r="5" fill="none" stroke="#f97316" stroke-width="1.2" opacity=".7"/>
-          <circle cx="110" cy="62" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/>
-          <line x1="110" y1="67" x2="110" y2="79" stroke="#e8eaf0" stroke-width="3" stroke-linecap="round"/>
-          <line x1="110" y1="71" x2="100" y2="77" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="110" y1="71" x2="122" y2="68" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="124" cy="65" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/>
-          <line x1="110" y1="79" x2="104" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <line x1="110" y1="79" x2="116" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/>
-          <rect x="158" y="80" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/>
-          <circle cx="170" cy="87" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/>
-          <circle cx="170" cy="87" r="1.5" fill="#f97316"/>
-          <path d="M 120 88 A 16 16 0 0 1 126 77" fill="none" stroke="#f97316" stroke-width=".8" stroke-dasharray="2 2" opacity=".5"/>
-          <text x="130" y="80" fill="#f97316" font-family="DM Mono,monospace" font-size="7" opacity=".7">45°</text>
-          <line x1="158" y1="87" x2="128" y2="78" stroke="#f97316" stroke-width=".8" stroke-dasharray="2 2" opacity=".4"/>
-          <text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text>
-        </svg>
-      </div>
-      <div class="drop-zone" id="zone-rear">
-        <div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div>
-        <span class="drop-label">Drop video or click</span>
-        <span class="drop-hint">MP4 · MOV · 1080p recommended</span>
-      </div>
-      <div class="video-preview" id="preview-rear">
-        <video id="vid-rear-thumb" muted playsinline></video>
-        <div class="video-overlay-bar">
-          <span class="video-filename" id="fname-rear"></span>
-          <button class="video-remove" onclick="removeVideo('rear')">REMOVE</button>
-        </div>
-      </div>
+      <div class="card-head"><div><div class="card-angle-tag">Angle 03</div><div class="card-title">Rear 45°</div><div class="card-desc">Behind &amp; offset 45° right<br>~12 ft from shooter</div></div><div class="status-dot"></div></div>
+      <div class="court-diagram"><svg viewBox="0 0 220 108" xmlns="http://www.w3.org/2000/svg" width="100%" style="display:block;"><rect width="220" height="108" fill="#1a1d24"/><line x1="30" y1="88" x2="110" y2="20" stroke="#ffffff10" stroke-width="1"/><line x1="190" y1="88" x2="110" y2="20" stroke="#ffffff10" stroke-width="1"/><line x1="30" y1="88" x2="190" y2="88" stroke="#ffffff10" stroke-width="1"/><circle cx="110" cy="22" r="5" fill="none" stroke="#f97316" stroke-width="1.2" opacity=".7"/><circle cx="110" cy="62" r="5" fill="none" stroke="#e8eaf0" stroke-width="2"/><line x1="110" y1="67" x2="110" y2="79" stroke="#e8eaf0" stroke-width="3" stroke-linecap="round"/><line x1="110" y1="71" x2="100" y2="77" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="110" y1="71" x2="122" y2="68" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><circle cx="124" cy="65" r="4" fill="none" stroke="#f97316" stroke-width="1.5"/><line x1="110" y1="79" x2="104" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><line x1="110" y1="79" x2="116" y2="88" stroke="#e8eaf0" stroke-width="2" stroke-linecap="round"/><rect x="158" y="80" width="24" height="14" rx="2" fill="#f9731628" stroke="#f97316" stroke-width="1"/><circle cx="170" cy="87" r="4" fill="none" stroke="#f97316" stroke-width="1.2"/><circle cx="170" cy="87" r="1.5" fill="#f97316"/><text x="110" y="107" text-anchor="middle" fill="#6b7280" font-family="DM Mono,monospace" font-size="7" letter-spacing=".06em">CAMERA POSITION</text></svg></div>
+      <div class="drop-zone" id="zone-rear"><div class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/></svg></div><span class="drop-label">Drop video or click</span><span class="drop-hint">MP4 · MOV · 1080p</span></div>
+      <div class="video-preview" id="preview-rear"><video id="vid-rear-thumb" muted playsinline></video><div class="video-overlay-bar"><span class="video-filename" id="fname-rear"></span><button class="video-remove" onclick="removeVideo('rear')">REMOVE</button></div></div>
       <input type="file" accept="video/*" class="file-input" id="file-rear">
     </div>
-
-  </div><!-- /angles-grid -->
-
+  </div>
   <div class="analyze-row">
-    <div class="analyze-info">
-      <strong>Ready to review footage?</strong><br>
-      Load all 3 angles to enter the synchronized player — scrub, step frame-by-frame, and compare angles side by side.
-    </div>
-    <button class="btn-analyze" id="btnOpenPlayer">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-      OPEN PLAYER
-    </button>
+    <div class="analyze-info"><strong>Load all 3 angles to continue.</strong><br>Review footage in the sync player, then run AI analysis from there.</div>
+    <button class="btn-analyze" id="btnOpenPlayer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>OPEN PLAYER</button>
   </div>
-
   <div class="tips-grid">
-    <div class="tip-card"><span class="tip-num">01</span><div class="tip-text"><strong>Use a stable mount</strong>Shaky footage breaks pose detection. Prop against a bag, cone, or use a phone tripod.</div></div>
-    <div class="tip-card"><span class="tip-num">02</span><div class="tip-text"><strong>Shoot 10+ per angle</strong>More attempts = better consistency scoring. Minimum 5 per session.</div></div>
-    <div class="tip-card"><span class="tip-num">03</span><div class="tip-text"><strong>Full body in frame</strong>Head to toe, every shot. Cropped feet cause missed keypoints.</div></div>
+    <div class="tip-card"><span class="tip-num">01</span><div class="tip-text"><strong>Stable mount</strong>Shaky footage breaks pose detection. Tripod or prop against a bag.</div></div>
+    <div class="tip-card"><span class="tip-num">02</span><div class="tip-text"><strong>10+ shots per angle</strong>More attempts = better consistency scoring. Min 5 per session.</div></div>
+    <div class="tip-card"><span class="tip-num">03</span><div class="tip-text"><strong>Full body in frame</strong>Head to toe every shot. Cropped feet = missed keypoints.</div></div>
   </div>
+</div>
 
-</div><!-- /uploadView -->
-
-<!-- ════════════════════════════════
-     VIEW 2: SYNC PLAYER
-════════════════════════════════ -->
+<!-- ═══ PLAYER ═══ -->
 <div id="playerView" class="view hidden">
-
-  <!-- top info bar -->
   <div class="player-topbar">
     <div class="player-pills">
-      <span class="angle-pill ok" id="pill-front">FRONT — —</span>
-      <span class="angle-pill ok" id="pill-side">SIDE — —</span>
-      <span class="angle-pill ok" id="pill-rear">REAR 45° — —</span>
+      <span class="angle-pill ok" id="pill-front">FRONT —</span>
+      <span class="angle-pill ok" id="pill-side">SIDE —</span>
+      <span class="angle-pill ok" id="pill-rear">REAR 45° —</span>
     </div>
     <div class="topbar-right">
       <div class="kbd-hints">
-        <span class="kbd-hint"><span class="kbd">Space</span> play</span>
-        <span class="kbd-hint"><span class="kbd">← →</span> frame</span>
-        <span class="kbd-hint"><span class="kbd">1 2 3</span> zoom</span>
-        <span class="kbd-hint"><span class="kbd">L</span> loop</span>
+        <span class="kbd-hint"><span class="kbd">Space</span>play</span>
+        <span class="kbd-hint"><span class="kbd">← →</span>frame</span>
+        <span class="kbd-hint"><span class="kbd">1 2 3</span>zoom</span>
+        <span class="kbd-hint"><span class="kbd">L</span>loop</span>
       </div>
+      <button class="btn-run-analysis" id="btnRunAnalysis">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        RUN ANALYSIS
+      </button>
     </div>
   </div>
-
-  <!-- 3 video panels -->
   <div class="videos-area" id="videosArea">
-
     <div class="video-panel" id="panel-front">
       <video class="panel-vid" id="pv-front" muted playsinline preload="auto"></video>
-      <div class="panel-top-bar">
-        <div class="panel-meta">
-          <div class="panel-tag">Angle 01</div>
-          <div class="panel-name">Front View</div>
-          <div class="panel-file" id="pfile-front"></div>
-        </div>
-        <button class="zoom-btn" id="zoom-front" onclick="toggleZoom('front')" title="Expand (key: 1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-        </button>
-      </div>
+      <div class="panel-top-bar"><div class="panel-meta"><div class="panel-tag">Angle 01</div><div class="panel-name">Front View</div><div class="panel-file" id="pfile-front"></div></div><button class="zoom-btn" id="zoom-front" onclick="toggleZoom('front')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
       <div class="panel-time" id="ptime-front">0:00.000</div>
       <div class="panel-flash" id="flash-front"></div>
     </div>
-
     <div class="video-panel" id="panel-side">
       <video class="panel-vid" id="pv-side" muted playsinline preload="auto"></video>
-      <div class="panel-top-bar">
-        <div class="panel-meta">
-          <div class="panel-tag">Angle 02</div>
-          <div class="panel-name">Side View</div>
-          <div class="panel-file" id="pfile-side"></div>
-        </div>
-        <button class="zoom-btn" id="zoom-side" onclick="toggleZoom('side')" title="Expand (key: 2)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-        </button>
-      </div>
+      <div class="panel-top-bar"><div class="panel-meta"><div class="panel-tag">Angle 02</div><div class="panel-name">Side View</div><div class="panel-file" id="pfile-side"></div></div><button class="zoom-btn" id="zoom-side" onclick="toggleZoom('side')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
       <div class="panel-time" id="ptime-side">0:00.000</div>
       <div class="panel-flash" id="flash-side"></div>
     </div>
-
     <div class="video-panel" id="panel-rear">
       <video class="panel-vid" id="pv-rear" muted playsinline preload="auto"></video>
-      <div class="panel-top-bar">
-        <div class="panel-meta">
-          <div class="panel-tag">Angle 03</div>
-          <div class="panel-name">Rear 45°</div>
-          <div class="panel-file" id="pfile-rear"></div>
-        </div>
-        <button class="zoom-btn" id="zoom-rear" onclick="toggleZoom('rear')" title="Expand (key: 3)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-        </button>
-      </div>
+      <div class="panel-top-bar"><div class="panel-meta"><div class="panel-tag">Angle 03</div><div class="panel-name">Rear 45°</div><div class="panel-file" id="pfile-rear"></div></div><button class="zoom-btn" id="zoom-rear" onclick="toggleZoom('rear')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button></div>
       <div class="panel-time" id="ptime-rear">0:00.000</div>
       <div class="panel-flash" id="flash-rear"></div>
     </div>
-
-  </div><!-- /videos-area -->
-
-  <!-- controls bar -->
+  </div>
   <div class="controls-bar">
-
-    <!-- scrubber -->
     <div class="scrubber-row">
       <span class="time-left" id="timeLeft">0:00.0</span>
-      <div class="scrubber-wrap" id="scrubberWrap">
-        <div class="scrubber-track">
-          <div class="scrubber-buf"  id="scrubBuf"></div>
-          <div class="scrubber-prog" id="scrubProg"></div>
-          <div class="scrubber-thumb" id="scrubThumb"></div>
-        </div>
-      </div>
+      <div class="scrubber-wrap" id="scrubberWrap"><div class="scrubber-track"><div class="scrubber-buf" id="scrubBuf"></div><div class="scrubber-prog" id="scrubProg"></div><div class="scrubber-thumb" id="scrubThumb"></div></div></div>
       <span class="time-right" id="timeRight">0:00.0</span>
     </div>
-
-    <!-- buttons -->
     <div class="btns-row">
-
-      <!-- skip to start -->
-      <button class="ctrl-btn" id="btnStart" title="Jump to start">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
-      </button>
-
-      <!-- step back 1 frame -->
-      <button class="ctrl-btn" id="btnFrameBack" title="Step back 1 frame (←)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-
-      <!-- PLAY / PAUSE -->
-      <button class="ctrl-btn play-btn" id="btnPlay" title="Play / Pause (Space)">
+      <button class="ctrl-btn" id="btnStart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></button>
+      <button class="ctrl-btn" id="btnFrameBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="ctrl-btn play-btn" id="btnPlay">
         <svg id="iconPlay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         <svg id="iconPause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
       </button>
-
-      <!-- step forward 1 frame -->
-      <button class="ctrl-btn" id="btnFrameFwd" title="Step forward 1 frame (→)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-
-      <!-- skip to end -->
-      <button class="ctrl-btn" id="btnEnd" title="Jump to end">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-      </button>
-
+      <button class="ctrl-btn" id="btnFrameFwd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+      <button class="ctrl-btn" id="btnEnd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></button>
       <div class="ctrl-divider"></div>
-
-      <!-- speed -->
       <div class="speed-group" id="speedGroup">
         <button class="speed-btn" data-speed="0.25">0.25×</button>
         <button class="speed-btn" data-speed="0.5">0.5×</button>
         <button class="speed-btn on" data-speed="1">1×</button>
       </div>
-
       <div class="ctrl-divider"></div>
-
-      <!-- loop -->
-      <button class="ctrl-btn loop-btn" id="btnLoop" title="Loop (L)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
-      </button>
-
+      <button class="ctrl-btn loop-btn" id="btnLoop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></button>
       <div class="ctrl-spacer"></div>
-
-      <!-- frame badge -->
       <div class="frame-badge" id="frameBadge">frame —</div>
+    </div>
+  </div>
+</div>
 
+<!-- ═══ ANALYSIS LOADING ═══ -->
+<div id="analysisView" class="view hidden">
+  <div class="analysis-wrap">
+    <p class="session-kicker">Processing</p>
+    <h2 class="analysis-title">Analyzing Your Session</h2>
+    <p class="analysis-sub">Running biomechanical analysis across 3 angles...</p>
+    <div class="analysis-steps">
+      <div class="analysis-step" id="step0"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Reading front-view footage</span></div>
+      <div class="analysis-step" id="step1"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Detecting body keypoints</span></div>
+      <div class="analysis-step" id="step2"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Tracking ball trajectory</span></div>
+      <div class="analysis-step" id="step3"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Computing arc angles across 10 shots</span></div>
+      <div class="analysis-step" id="step4"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Measuring release timing &amp; drift</span></div>
+      <div class="analysis-step" id="step5"><div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><span class="step-label">Generating coaching report</span></div>
+    </div>
+    <div class="a-prog-track"><div class="a-prog-fill" id="aProgFill"></div></div>
+  </div>
+</div>
+
+<!-- ═══ REPORT ═══ -->
+<div id="reportView" class="view hidden">
+  <div class="report-header">
+    <div><p class="report-kicker">Session Report</p><h2 class="report-title" id="reportTitle">Shot Analysis</h2><p class="report-date" id="reportDate"></p></div>
+    <div class="report-actions">
+      <button class="btn-secondary" onclick="switchView('player')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>REVIEW FOOTAGE</button>
+      <button class="btn-primary-sm" onclick="shareReport()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>SHARE REPORT</button>
     </div>
   </div>
 
-</div><!-- /playerView -->
+  <div class="score-hero" id="scoreHero">
+    <div class="score-grade-wrap">
+      <div class="score-grade" id="scoreGrade">—</div>
+      <div class="score-grade-label">GRADE</div>
+    </div>
+    <div class="score-details">
+      <div class="score-number" id="scoreNumber">— <span>/ 100</span></div>
+      <p class="score-headline" id="scoreHeadline"></p>
+      <div class="score-bars" id="scoreBars"></div>
+    </div>
+  </div>
 
-<!-- toast -->
+  <p class="section-label">Metric Breakdown</p>
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <div class="report-section">
+    <div class="arc-section">
+      <div class="arc-section-head">
+        <div><div class="arc-section-title">Shot Arc Consistency</div><div class="arc-section-sub">All shots overlaid — tighter cluster = more consistent release</div></div>
+        <div class="arc-legend">
+          <div class="arc-legend-item"><div class="arc-legend-line" style="background:rgba(249,115,22,.3)"></div>Individual</div>
+          <div class="arc-legend-item"><div class="arc-legend-line" style="background:#f97316"></div>Your avg</div>
+          <div class="arc-legend-item"><div class="arc-legend-line" style="background:none;border-top:2px dashed #22c55e;width:20px"></div>Ideal 46°</div>
+        </div>
+      </div>
+      <canvas id="arcCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <p class="section-label">Priority Drill — Fix This First</p>
+    <div class="drill-card">
+      <div class="drill-card-head"><span class="drill-priority-tag">LOWEST SCORE</span><span class="drill-card-title" id="drillTitle">—</span></div>
+      <div class="drill-body">
+        <div class="drill-issue" id="drillIssue"></div>
+        <div class="drill-ex-title" id="drillExTitle"></div>
+        <div class="drill-ex-desc" id="drillExDesc"></div>
+        <div class="drill-steps" id="drillSteps"></div>
+        <div class="drill-reps" id="drillReps"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <p class="section-label">Per-Shot Breakdown</p>
+    <div class="shot-table-wrap">
+      <div class="shot-table-head"><div class="shot-table-title" id="shotTableTitle">10 shots</div><div class="shot-table-sub">From front-view footage</div></div>
+      <table><thead><tr><th>Shot</th><th>Arc °</th><th>Drift</th><th>Release</th><th>Balance</th><th>Pocket</th></tr></thead><tbody id="shotTableBody"></tbody></table>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
-<!-- ════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════ -->
 <script>
-/* ─── State ───────────────────────────────────── */
-const ANGLES = ['front','side','rear'];
-const videos  = { front: null, side: null, rear: null };
-const files   = { front: null, side: null, rear: null };
-const FPS     = 30;
-const FRAME   = 1 / FPS;
+/* ══ state ══ */
+const ANGLES=['front','side','rear'];
+const videos={front:null,side:null,rear:null}, files={front:null,side:null,rear:null};
+const FPS=30, FRAME=1/FPS;
+let masterDuration=0,isPlaying=false,playSpeed=1,looping=false,zoomedPanel=null,scrubbing=false,rafId=null;
 
-let masterDuration = 0;
-let isPlaying      = false;
-let playSpeed      = 1;
-let looping        = false;
-let zoomedPanel    = null;
-let scrubbing      = false;
-let rafId          = null;
+const pvEls   ={front:$('pv-front'),   side:$('pv-side'),   rear:$('pv-rear')  };
+const timeEls ={front:$('ptime-front'),side:$('ptime-side'),rear:$('ptime-rear')};
+const flashEls={front:$('flash-front'),side:$('flash-side'),rear:$('flash-rear')};
+const pillEls ={front:$('pill-front'), side:$('pill-side'), rear:$('pill-rear') };
+const pfileEls={front:$('pfile-front'),side:$('pfile-side'),rear:$('pfile-rear')};
+function $(s){return document.getElementById(s);}
 
-/* ─── Element refs ────────────────────────────── */
-const pvEls    = { front: id('pv-front'),   side: id('pv-side'),   rear: id('pv-rear')   };
-const timeEls  = { front: id('ptime-front'),side: id('ptime-side'),rear: id('ptime-rear') };
-const flashEls = { front: id('flash-front'),side: id('flash-side'),rear: id('flash-rear') };
-const pillEls  = { front: id('pill-front'), side: id('pill-side'), rear: id('pill-rear')  };
-const pfileEls = { front: id('pfile-front'),side: id('pfile-side'),rear: id('pfile-rear') };
+/* ══ upload ══ */
+ANGLES.forEach(a=>{
+  const zone=$(`zone-${a}`),input=$(`file-${a}`),card=$(`card-${a}`);
+  zone.addEventListener('click',()=>input.click());
+  input.addEventListener('change',e=>{if(e.target.files[0])loadFile(a,e.target.files[0]);});
+  zone.addEventListener('dragover',e=>{e.preventDefault();card.classList.add('drag-over');});
+  zone.addEventListener('dragleave',()=>card.classList.remove('drag-over'));
+  zone.addEventListener('drop',e=>{e.preventDefault();card.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('video/'))loadFile(a,f);else toast('Drop a video file');});
+});
+function loadFile(a,file){
+  if(videos[a])URL.revokeObjectURL(videos[a]);
+  const url=URL.createObjectURL(file);videos[a]=url;files[a]=file.name;
+  $(`vid-${a}-thumb`).src=url;$(`fname-${a}`).textContent=file.name;$(`card-${a}`).classList.add('loaded');
+  updateProgress();toast(`${aLabel(a)} loaded`);
+}
+function removeVideo(a){
+  if(videos[a]){URL.revokeObjectURL(videos[a]);videos[a]=null;}files[a]=null;
+  $(`vid-${a}-thumb`).src='';$(`fname-${a}`).textContent='';$(`card-${a}`).classList.remove('loaded');$(`file-${a}`).value='';
+  updateProgress();toast(`${aLabel(a)} removed`);
+}
+function updateProgress(){
+  const n=ANGLES.filter(a=>videos[a]).length;
+  $('progressFill').style.width=`${n/3*100}%`;$('progressCount').textContent=`${n} / 3`;
+  $('btnOpenPlayer').classList.toggle('active',n===3);
+}
 
-function id(s){ return document.getElementById(s); }
-
-/* ─── UPLOAD: setup drag/click ────────────────── */
-ANGLES.forEach(angle => {
-  const zone  = id(`zone-${angle}`);
-  const input = id(`file-${angle}`);
-  const card  = id(`card-${angle}`);
-
-  zone.addEventListener('click', () => input.click());
-  input.addEventListener('change', e => { if (e.target.files[0]) loadFile(angle, e.target.files[0]); });
-
-  zone.addEventListener('dragover', e => { e.preventDefault(); card.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => card.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault();
-    card.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('video/')) loadFile(angle, f);
-    else toast('Drop a video file (MP4 / MOV)');
+/* ══ view switching ══ */
+const BADGES={upload:'F1 — VIDEO CAPTURE',player:'F2 — SYNC PLAYER',analysis:'F5 — ANALYZING…',report:'F5 — SHOT REPORT'};
+function switchView(to){
+  ['upload','player','analysis','report'].forEach(v=>{
+    $(`${v}View`).classList.toggle('active',v===to);
+    $(`${v}View`).classList.toggle('hidden',v!==to);
   });
+  $('headerBadge').textContent=BADGES[to]||'';
+  $('btnBack').classList.toggle('visible',to==='player'||to==='report');
+  $('btnBack').onclick=to==='report'?()=>switchView('player'):goToUpload;
+}
+function goToUpload(){pauseAll();switchView('upload');}
+
+/* ══ player ══ */
+$('btnOpenPlayer').addEventListener('click',()=>{if(!ANGLES.every(a=>videos[a]))return;initPlayer();switchView('player');});
+function initPlayer(){
+  ANGLES.forEach(a=>{pvEls[a].src=videos[a];pvEls[a].playbackRate=playSpeed;pillEls[a].textContent=`${aLabel(a).toUpperCase()} — ${files[a]||''}`;pfileEls[a].textContent=files[a]||'';});
+  Promise.all(ANGLES.map(a=>new Promise(res=>{const v=pvEls[a];if(v.readyState>=1)return res();v.addEventListener('loadedmetadata',res,{once:true});}))).then(()=>{masterDuration=Math.min(...ANGLES.map(a=>pvEls[a].duration||Infinity));$('timeRight').textContent=fmtTime(masterDuration);seekAll(0);});
+}
+function playAll(){ANGLES.forEach(a=>{pvEls[a].playbackRate=playSpeed;pvEls[a].play();});isPlaying=true;$('btnPlay').classList.add('playing');$('iconPlay').style.display='none';$('iconPause').style.display='';startRaf();}
+function pauseAll(){ANGLES.forEach(a=>pvEls[a].pause());isPlaying=false;$('btnPlay').classList.remove('playing');$('iconPlay').style.display='';$('iconPause').style.display='none';cancelAnimationFrame(rafId);syncTimes();}
+function togglePlay(){if(isPlaying)pauseAll();else{if(masterDuration&&pvEls['front'].currentTime>=masterDuration-0.05)seekAll(0);playAll();}}
+function seekAll(t){t=Math.max(0,Math.min(t,masterDuration||0));ANGLES.forEach(a=>{const v=pvEls[a];if(isFinite(v.duration)&&t<=v.duration)v.currentTime=t;});updateScrubber(t);syncTimes();}
+function stepFrame(d){pauseAll();seekAll((pvEls['front'].currentTime||0)+d*FRAME);ANGLES.forEach(a=>{const fl=flashEls[a];fl.classList.add('on');setTimeout(()=>fl.classList.remove('on'),120);});updateFB();}
+function startRaf(){cancelAnimationFrame(rafId);function tick(){const t=pvEls['front'].currentTime;updateScrubber(t);syncTimes();updateFB();if(masterDuration&&t>=masterDuration-0.05){looping?seekAll(0):pauseAll();return;}rafId=requestAnimationFrame(tick);}rafId=requestAnimationFrame(tick);}
+function updateScrubber(t){const p=masterDuration?(t/masterDuration)*100:0;$('scrubProg').style.width=`${p}%`;$('scrubThumb').style.left=`${p}%`;$('timeLeft').textContent=fmtTime(t);$('timeRight').textContent=fmtTime(masterDuration||0);}
+function syncTimes(){ANGLES.forEach(a=>{timeEls[a].textContent=fmtTimeMs(pvEls[a].currentTime||0);});}
+function updateFB(){$('frameBadge').textContent=`frame ${Math.round((pvEls['front'].currentTime||0)*FPS)}`;}
+
+const sw=$('scrubberWrap');
+sw.addEventListener('mousedown',startScrub);sw.addEventListener('touchstart',startScrub,{passive:false});
+function startScrub(e){e.preventDefault();scrubbing=true;const wp=isPlaying;if(wp)pauseAll();doScrub(e);const mv=ev=>{if(scrubbing)doScrub(ev);};const up=()=>{scrubbing=false;if(wp)playAll();document.removeEventListener('mousemove',mv);document.removeEventListener('touchmove',mv);document.removeEventListener('mouseup',up);document.removeEventListener('touchend',up);};document.addEventListener('mousemove',mv);document.addEventListener('touchmove',mv,{passive:false});document.addEventListener('mouseup',up);document.addEventListener('touchend',up);}
+function doScrub(e){const r=sw.getBoundingClientRect();seekAll(Math.max(0,Math.min(1,((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width))*masterDuration);}
+
+$('speedGroup').addEventListener('click',e=>{const b=e.target.closest('.speed-btn');if(!b)return;playSpeed=parseFloat(b.dataset.speed);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.toggle('on',x===b));ANGLES.forEach(a=>pvEls[a].playbackRate=playSpeed);toast(`Speed: ${b.textContent}`);});
+$('btnLoop').addEventListener('click',()=>{looping=!looping;$('btnLoop').classList.toggle('on',looping);toast(looping?'Loop ON':'Loop OFF');});
+$('btnStart').addEventListener('click',()=>{pauseAll();seekAll(0);});
+$('btnEnd').addEventListener('click',()=>{pauseAll();seekAll(masterDuration);});
+$('btnFrameBack').addEventListener('click',()=>stepFrame(-1));
+$('btnFrameFwd').addEventListener('click',()=>stepFrame(1));
+$('btnPlay').addEventListener('click',togglePlay);
+function toggleZoom(a){const area=$('videosArea');if(zoomedPanel===a){zoomedPanel=null;area.classList.remove('one-panel');ANGLES.forEach(x=>{$(`panel-${x}`).classList.remove('solo');$(`zoom-${x}`).classList.remove('zoomed');});}else{zoomedPanel=a;area.classList.add('one-panel');ANGLES.forEach(x=>{$(`panel-${x}`).classList.toggle('solo',x===a);$(`zoom-${x}`).classList.toggle('zoomed',x===a);});}}
+
+document.addEventListener('keydown',e=>{
+  if($('playerView').classList.contains('hidden'))return;if(e.target.tagName==='INPUT')return;
+  switch(e.code){case 'Space':e.preventDefault();togglePlay();break;case 'ArrowLeft':e.preventDefault();stepFrame(-1);break;case 'ArrowRight':e.preventDefault();stepFrame(1);break;case 'KeyL':$('btnLoop').click();break;case 'Digit1':toggleZoom('front');break;case 'Digit2':toggleZoom('side');break;case 'Digit3':toggleZoom('rear');break;case 'Home':pauseAll();seekAll(0);break;case 'End':pauseAll();seekAll(masterDuration);break;}
 });
 
-function loadFile(angle, file) {
-  if (videos[angle]) URL.revokeObjectURL(videos[angle]);
-  const url = URL.createObjectURL(file);
-  videos[angle] = url;
-  files[angle]  = file.name;
-
-  // thumbnail in upload card
-  const thumb = id(`vid-${angle}-thumb`);
-  thumb.src = url;
-  id(`fname-${angle}`).textContent = file.name;
-  id(`card-${angle}`).classList.add('loaded');
-
-  updateProgress();
-  toast(`${angleLabel(angle)} loaded — ${file.name}`);
+/* ══ analysis ══ */
+$('btnRunAnalysis').addEventListener('click',runAnalysis);
+function runAnalysis(){
+  pauseAll();switchView('analysis');
+  for(let i=0;i<6;i++){$(`step${i}`).classList.remove('active','done');}
+  $('aProgFill').style.width='0%';
+  [0,600,1200,1900,2600,3200].forEach((d,i)=>setTimeout(()=>{$(`step${i}`).classList.add('active');$('aProgFill').style.width=`${(i/6)*100}%`;},d));
+  [500,1100,1800,2500,3100,3700].forEach((d,i)=>setTimeout(()=>{$(`step${i}`).classList.remove('active');$(`step${i}`).classList.add('done');},d));
+  setTimeout(()=>{$('aProgFill').style.width='100%';const data=genAnalysis();setTimeout(()=>{renderReport(data);switchView('report');},400);},4000);
 }
 
-function removeVideo(angle) {
-  if (videos[angle]) { URL.revokeObjectURL(videos[angle]); videos[angle] = null; }
-  files[angle] = null;
-  id(`vid-${angle}-thumb`).src = '';
-  id(`fname-${angle}`).textContent = '';
-  id(`card-${angle}`).classList.remove('loaded');
-  id(`file-${angle}`).value = '';
-  updateProgress();
-  toast(`${angleLabel(angle)} removed`);
+/* ══ mock data ══ */
+function rnd(a,b){return a+Math.random()*(b-a);}
+function rndN(m,s){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return m+s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function avg(a){return a.reduce((s,x)=>s+x,0)/a.length;}
+function sd(a){const m=avg(a);return Math.sqrt(a.reduce((s,x)=>s+(x-m)**2,0)/a.length);}
+
+function genAnalysis(){
+  const N=10;
+  const arcMu=rnd(36,49),driftMu=rnd(-3,3),relMu=rnd(0.80,0.96),balMu=rnd(58,92);
+  const shots=Array.from({length:N},()=>({
+    arc:clamp(rndN(arcMu,3.2),27,60),drift:rndN(driftMu,2.5),
+    release:clamp(rndN(relMu,0.07),0.5,1),balance:clamp(rndN(balMu,9),35,100),
+    pocket:clamp(rndN(0.5,0.06),0.28,0.72)
+  }));
+  const arcAvg=avg(shots.map(s=>s.arc)),arcSD=sd(shots.map(s=>s.arc));
+  const driftAvg=avg(shots.map(s=>Math.abs(s.drift)));
+  const relAvg=avg(shots.map(s=>s.release)),relSD=sd(shots.map(s=>s.release));
+  const balAvg=avg(shots.map(s=>s.balance));
+  const pocketSD=sd(shots.map(s=>s.pocket));
+  const arcScore =clamp(Math.round(((arcAvg-28)/(56-28))*80+(1-arcSD/9)*20),12,99);
+  const driftScore=clamp(Math.round(100-driftAvg*15),15,99);
+  const relScore  =clamp(Math.round(relAvg*68+(1-relSD/0.16)*32),15,99);
+  const balScore  =clamp(Math.round(balAvg),15,99);
+  const pocketScore=clamp(Math.round(100-pocketSD*620),15,99);
+  const overall=Math.round(arcScore*.3+driftScore*.2+relScore*.25+balScore*.15+pocketScore*.1);
+  return{shots,arcAvg,arcSD,arcScore,driftAvg,driftScore,relAvg,relSD,relScore,balAvg,balScore,pocketSD,pocketScore,overall,N};
 }
 
-function updateProgress() {
-  const n = ANGLES.filter(a => videos[a]).length;
-  id('progressFill').style.width  = `${(n/3)*100}%`;
-  id('progressCount').textContent = `${n} / 3`;
-  const btn = id('btnOpenPlayer');
-  btn.classList.toggle('active', n === 3);
+/* ══ render report ══ */
+function renderReport(d){
+  $('reportTitle').textContent=`${d.N}-Shot Analysis`;
+  $('reportDate').textContent=new Date().toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const g=d.overall>=85?'A':d.overall>=70?'B':d.overall>=55?'C':'D';
+  $('scoreGrade').textContent=g;$('scoreGrade').className=`score-grade ${g}`;
+  $('scoreNumber').innerHTML=`${d.overall} <span>/ 100</span>`;
+  $('scoreHeadline').textContent={A:'Strong fundamentals. Focus on consistency under pressure.',B:'Solid form with a few mechanics worth dialing in.',C:'One key fix will unlock a significant jump in your percentage.',D:'Several mechanics need attention. Start with the priority drill below.'}[g];
+
+  const mets=[
+    {k:'ARC ANGLE',s:d.arcScore},{k:'DRIFT',s:d.driftScore},{k:'RELEASE',s:d.relScore},
+    {k:'BALANCE',s:d.balScore},{k:'POCKET',s:d.pocketScore}
+  ];
+  $('scoreBars').innerHTML=mets.map(m=>`<div class="score-bar-row"><span class="score-bar-label">${m.k}</span><div class="score-bar-track"><div class="score-bar-fill" data-w="${m.s}" style="background:${sColor(m.s)}"></div></div><span class="score-bar-val">${m.s}</span></div>`).join('');
+
+  const mdefs=[
+    {name:'Arc Angle',score:d.arcScore,value:`Avg ${d.arcAvg.toFixed(1)}° · target 42–50°`,insight:d.arcAvg<40?`At ${d.arcAvg.toFixed(1)}°, your arc is below the optimal window. Raising it 5° increases effective rim diameter ~15%.`:d.arcAvg>52?`Very high arc at ${d.arcAvg.toFixed(1)}°. Aim for 44–48° — excessive height adds timing variance.`:`Arc is in the optimal zone. Shot-to-shot variance (±${d.arcSD.toFixed(1)}°) is your main focus.`},
+    {name:'Drift',score:d.driftScore,value:`Avg ${d.driftAvg.toFixed(1)}" ${d.driftAvg>0.5?'off-center':'centered'}`,insight:d.driftAvg>3?`Significant lateral drift — guide hand likely applying pressure at release. Check it comes off the ball cleanly.`:d.driftAvg>1.5?`Minor drift present. Small wrist adjustment at release will center the shot line.`:`Shot drift is within acceptable range. Ball tracking straight to the basket.`},
+    {name:'Release Timing',score:d.relScore,value:`Consistency ${d.relScore}/100`,insight:d.relScore<55?`High release timing variance — you're releasing at different points in your jump. Always release at peak jump height.`:d.relScore<75?`Moderately consistent. Sync wrist snap with peak jump height to tighten this.`:`Consistent release timing. You're firing at a similar point in the jump each rep.`},
+    {name:'Landing Balance',score:d.balScore,value:`Avg ${d.balAvg.toFixed(0)}/100`,insight:d.balScore<55?`Landing instability detected — often landing off your shooting foot. Balanced landing means a balanced take-off.`:d.balScore<75?`Moderate balance. Feet should land shoulder-width for stability.`:`Strong landing balance. Absorbing shot energy evenly.`},
+    {name:'Shot Pocket',score:d.pocketScore,value:`Variance ±${(d.pocketSD*100).toFixed(1)}% height`,insight:d.pocketScore<55?`Pocket height varies significantly between shots — your shot starts from a different position each rep, making muscle memory hard.`:d.pocketScore<75?`Fairly consistent pocket. Small improvements in catch height will lock in mechanics.`:`Excellent pocket consistency. Ball arrives at the same position before each release.`}
+  ];
+
+  $('metricsGrid').innerHTML=mdefs.map(m=>{
+    const c=sColor(m.score);const badge=m.score>=75?'<span class="metric-badge badge-great">GOOD</span>':m.score>=55?'<span class="metric-badge badge-ok">IMPROVE</span>':'<span class="metric-badge badge-fix">FIX</span>';
+    return`<div class="metric-card"><div class="metric-top-line" style="background:${c}"></div><div class="metric-score-row"><div class="metric-score" style="color:${c}">${m.score}<span class="metric-score-max">/100</span></div>${badge}</div><div class="metric-name">${m.name}</div><div class="metric-value">${m.value}</div><div class="metric-bar-track"><div class="metric-bar-fill" data-w="${m.score}" style="background:${c}"></div></div><div class="metric-insight">${m.insight}</div></div>`;
+  }).join('');
+
+  setTimeout(()=>{
+    document.querySelectorAll('.score-bar-fill,.metric-bar-fill').forEach(el=>{el.style.width=`${el.dataset.w}%`;});
+  },80);
+
+  drawArcs(d);
+  const worst=[...mdefs].sort((a,b)=>a.score-b.score)[0];renderDrill(worst.name,d);
+
+  $('shotTableTitle').textContent=`${d.N} shots analyzed`;
+  $('shotTableBody').innerHTML=d.shots.map((s,i)=>{
+    const ac=s.arc<38?'arc-low':s.arc>50?'arc-high':'';
+    const dc=s.drift<-0.5?'drift-left':s.drift>0.5?'drift-right':'';
+    const dl=Math.abs(s.drift)<0.3?'—':`${Math.abs(s.drift).toFixed(1)}" ${s.drift<0?'L':'R'}`;
+    const bc=s.balance>75?'#22c55e':s.balance>55?'#f59e0b':'#ef4444';
+    const rl=s.release>=0.9?'✓ Good':s.release>=0.75?'~ OK':'⚠ Late';
+    const pl=Math.abs(s.pocket-0.5)<0.04?'Ideal':Math.abs(s.pocket-0.5)<0.08?'Near':'Off';
+    return`<tr><td><span class="shot-num">SHOT ${String(i+1).padStart(2,'0')}</span></td><td><span class="${ac}">${s.arc.toFixed(1)}°</span></td><td><span class="${dc}">${dl}</span></td><td>${rl}</td><td><span class="b-dot" style="background:${bc}"></span>${s.balance.toFixed(0)}</td><td>${pl}</td></tr>`;
+  }).join('');
 }
 
-/* ─── Open player ─────────────────────────────── */
-id('btnOpenPlayer').addEventListener('click', () => {
-  if (!ANGLES.every(a => videos[a])) return;
-  initPlayer();
-  switchView('player');
-});
-
-function initPlayer() {
-  let shortest = Infinity;
-
-  ANGLES.forEach(angle => {
-    const vid = pvEls[angle];
-    vid.src = videos[angle];
-    vid.playbackRate = playSpeed;
-    vid.loop = false;
-
-    // pill labels
-    pillEls[angle].textContent = `${angleLabel(angle).toUpperCase()} — ${files[angle] || ''}`;
-    pfileEls[angle].textContent = files[angle] || '';
-
-    vid.addEventListener('loadedmetadata', () => {
-      if (vid.duration < shortest) {
-        shortest = vid.duration;
-        masterDuration = shortest;
-        id('timeRight').textContent = fmtTime(masterDuration);
-      }
-    }, { once: false });
-  });
-
-  // wait for all to be ready then set duration
-  Promise.all(ANGLES.map(a => new Promise(res => {
-    const v = pvEls[a];
-    if (v.readyState >= 1) return res();
-    v.addEventListener('loadedmetadata', res, { once: true });
-  }))).then(() => {
-    masterDuration = Math.min(...ANGLES.map(a => pvEls[a].duration || Infinity));
-    id('timeRight').textContent = fmtTime(masterDuration);
-    seekAll(0);
-    updateScrubber(0);
-  });
+/* ══ arc canvas ══ */
+function drawArcs(d){
+  const canvas=$('arcCanvas');
+  const W=canvas.offsetWidth||800,H=200;canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#13151a';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.05)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,H-18);ctx.lineTo(W,H-18);ctx.stroke();
+  const bx=W*.78,by=H*.2,sx=W*.13,sy=H-18;
+  // rim
+  ctx.strokeStyle='rgba(249,115,22,.5)';ctx.lineWidth=2;ctx.beginPath();ctx.arc(bx,by,7,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='rgba(249,115,22,.3)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(bx-4,by-14);ctx.lineTo(bx+14,by-14);ctx.stroke();
+  // ideal arc
+  ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(34,197,94,.45)';ctx.lineWidth=1.5;drawArc(ctx,sx,sy,bx,by,46);ctx.setLineDash([]);
+  // individual shots
+  d.shots.forEach(s=>{ctx.strokeStyle='rgba(249,115,22,.16)';ctx.lineWidth=1.5;drawArc(ctx,sx,sy,bx,by,s.arc);});
+  // average
+  ctx.strokeStyle='#f97316';ctx.lineWidth=2.5;drawArc(ctx,sx,sy,bx,by,d.arcAvg);
+  // shooter
+  ctx.strokeStyle='rgba(232,234,240,.45)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(sx,sy-28,5,0,Math.PI*2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx,sy-23);ctx.lineTo(sx,sy-10);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx,sy-18);ctx.lineTo(sx+8,sy-22);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx,sy-18);ctx.lineTo(sx-6,sy-14);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx,sy-10);ctx.lineTo(sx-4,sy);ctx.lineTo(sx+4,sy);ctx.stroke();
+  // annotation
+  ctx.fillStyle='rgba(249,115,22,.9)';ctx.font=`bold 12px "DM Mono",monospace`;
+  ctx.fillText(`${d.arcAvg.toFixed(1)}° avg`,sx+46,sy-Math.tan(d.arcAvg*Math.PI/180)*(W*.65)*.28-6);
+}
+function drawArc(ctx,x1,y1,x2,y2,deg){
+  const a=deg*Math.PI/180,mx=(x1+x2)/2,ph=Math.tan(a)*Math.abs(x2-x1)*.38,cy=Math.min(y1,y2)-ph;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.quadraticCurveTo(mx,cy,x2,y2);ctx.stroke();
 }
 
-/* ─── View switching ──────────────────────────── */
-function switchView(to) {
-  id('uploadView').classList.toggle('active',  to === 'upload');
-  id('uploadView').classList.toggle('hidden',  to !== 'upload');
-  id('playerView').classList.toggle('active',  to === 'player');
-  id('playerView').classList.toggle('hidden',  to !== 'player');
-  id('headerBadge').textContent = to === 'player' ? 'F2 — SYNC PLAYER' : 'F1 — VIDEO CAPTURE';
-  id('btnBack').classList.toggle('visible', to === 'player');
+/* ══ drill library ══ */
+const DRILLS={
+  'Arc Angle':{issue:`Your arc averages {arcAvg}° — below the optimal 42–50° window. A flat shot has a smaller entry angle into the rim, shrinking the effective target. Raising arc by 5° increases effective rim diameter ~15%.`,title:'Wall Drill — Arc Trainer',desc:'Stand 3 feet from a wall. Shoot straight up and catch yourself. The wall makes flat shooting impossible.',steps:['Stand 3 ft from a wall, feet shoulder-width','Hold ball in shooting pocket at chin height','Shoot straight up — ball should clear your height by 1.5–2 ft before returning','Catch without moving feet','Focus: full wrist snap through at release'],reps:['3 sets × 10 reps','Rest 45s between sets','Daily for 2 weeks']},
+  'Drift':{issue:`Shots are drifting {driftAvg}" off-center on average. This typically comes from the guide hand applying lateral pressure at release or shooting hand misalignment.`,title:'One-Hand Form Shooting',desc:'Remove the guide hand entirely. Shoot one-handed from 3–5 feet. Any drift is immediately visible.',steps:['Stand 4 ft from basket, shooting hand only','Align index finger with back of rim','Release with full wrist snap — pure backspin, zero sidespin','Watch rim contact: left/right = misalignment','Add guide hand back only after 10 straight on-target reps'],reps:['2 sets × 10 one-handed','2 sets × 10 with guide hand','Goal: zero sidespin on the ball']},
+  'Release Timing':{issue:`Release timing varies across shots — you're not consistently releasing at peak jump height. Late releases add downward force; early releases lose leg power.`,title:'Catch-and-Shoot Jump Timing',desc:'Partner feeds you the ball at your peak jump. Grooves the neural sync between catch and release.',steps:['Partner stands 8 ft away','Jump straight up — at peak, partner tosses ball to your hands','Shoot immediately on catch, no pump fake','Feel: catch = release, simultaneous','If sinking before shooting, you\'re catching too late'],reps:['3 sets × 8 reps','30s rest between sets','Progress: add step-in dribble after week 1']},
+  'Landing Balance':{issue:`Landing mechanics show instability after shots. Unbalanced landing = unbalanced take-off — the body compensates mid-flight, degrading your shot every time.`,title:'Spot Shooting — Land on X',desc:'Tape an X on the floor. Land on it every shot. Trains straight-up jumping instead of forward drift.',steps:['Tape an X at your shooting spot','Shoot focusing on jumping straight up','Land on or within 6" of the X','Forward landing: weight too far on toes at takeoff','Sideways landing: hip twist at release'],reps:['50 shots per session','Track % landing within 6" of X','Goal: 80% within the zone']},
+  'Shot Pocket':{issue:`Shot pocket position varies significantly between shots. When the ball arrives at different heights, your shooting motion starts from a different position — making consistent muscle memory impossible.`,title:'Pocket + Pause Drill',desc:'Catch → pocket → pause 1 second → shoot. The pause forces conscious pocket position before each shot.',steps:['Catch or pick up ball','Bring to pocket: shooting hand under, guide hand on side','Hold 1-count — feel position, check elbow is under ball','Execute normal shot from that position','Gradually reduce pause as pocket becomes automatic'],reps:['3 sets × 15 shots','Pause: 1s → 0.5s → 0 over 3 sessions','Film yourself to verify pocket height is consistent']}
+};
+function renderDrill(name,d){
+  const dr=DRILLS[name];if(!dr)return;
+  $('drillTitle').textContent=`${name} Fix`;
+  $('drillIssue').textContent=dr.issue.replace('{arcAvg}',d.arcAvg.toFixed(1)).replace('{driftAvg}',d.driftAvg.toFixed(1));
+  $('drillExTitle').textContent=dr.title;$('drillExDesc').textContent=dr.desc;
+  $('drillSteps').innerHTML=dr.steps.map((s,i)=>`<div class="drill-step"><span class="drill-step-num">${String(i+1).padStart(2,'0')}</span><span class="drill-step-txt">${s}</span></div>`).join('');
+  $('drillReps').innerHTML=dr.reps.map(r=>`<span class="drill-rep-badge">${r}</span>`).join('');
 }
 
-function goToUpload() {
-  pauseAll();
-  switchView('upload');
-}
-
-/* ─── Playback ────────────────────────────────── */
-function playAll() {
-  ANGLES.forEach(a => { pvEls[a].playbackRate = playSpeed; pvEls[a].play(); });
-  isPlaying = true;
-  id('btnPlay').classList.add('playing');
-  id('iconPlay').style.display  = 'none';
-  id('iconPause').style.display = '';
-  startRaf();
-}
-
-function pauseAll() {
-  ANGLES.forEach(a => pvEls[a].pause());
-  isPlaying = false;
-  id('btnPlay').classList.remove('playing');
-  id('iconPlay').style.display  = '';
-  id('iconPause').style.display = 'none';
-  cancelAnimationFrame(rafId);
-  syncPanelTimes();
-}
-
-function togglePlay() {
-  if (isPlaying) pauseAll();
-  else {
-    // if at/past end, restart
-    const master = pvEls['front'];
-    if (masterDuration && master.currentTime >= masterDuration - 0.05) seekAll(0);
-    playAll();
-  }
-}
-
-function seekAll(t) {
-  t = Math.max(0, Math.min(t, masterDuration || 0));
-  ANGLES.forEach(a => {
-    const v = pvEls[a];
-    if (isFinite(v.duration) && t <= v.duration) v.currentTime = t;
-  });
-  updateScrubber(t);
-  syncPanelTimes();
-}
-
-function stepFrame(dir) {
-  pauseAll();
-  const cur = pvEls['front'].currentTime || 0;
-  seekAll(cur + dir * FRAME);
-  // flash all panels
-  ANGLES.forEach(a => {
-    const fl = flashEls[a];
-    fl.classList.add('on');
-    setTimeout(() => fl.classList.remove('on'), 120);
-  });
-  updateFrameBadge();
-}
-
-/* ─── RAF loop ────────────────────────────────── */
-function startRaf() {
-  cancelAnimationFrame(rafId);
-  function tick() {
-    const master = pvEls['front'];
-    if (!master) return;
-    const t = master.currentTime;
-    updateScrubber(t);
-    syncPanelTimes();
-    updateFrameBadge();
-
-    if (masterDuration && t >= masterDuration - 0.05) {
-      if (looping) seekAll(0);
-      else { pauseAll(); seekAll(masterDuration); }
-      return;
-    }
-    rafId = requestAnimationFrame(tick);
-  }
-  rafId = requestAnimationFrame(tick);
-}
-
-/* ─── Scrubber ────────────────────────────────── */
-function updateScrubber(t) {
-  const pct = masterDuration ? (t / masterDuration) * 100 : 0;
-  id('scrubProg').style.width  = `${pct}%`;
-  id('scrubThumb').style.left  = `${pct}%`;
-  id('timeLeft').textContent   = fmtTime(t);
-  id('timeRight').textContent  = fmtTime(masterDuration || 0);
-}
-
-const scrubWrap = id('scrubberWrap');
-scrubWrap.addEventListener('mousedown',  startScrub);
-scrubWrap.addEventListener('touchstart', startScrub, { passive: false });
-
-function startScrub(e) {
-  e.preventDefault();
-  scrubbing = true;
-  const wasPlaying = isPlaying;
-  if (wasPlaying) pauseAll();
-  doScrub(e);
-
-  function move(ev) { if (scrubbing) doScrub(ev); }
-  function up()     {
-    scrubbing = false;
-    if (wasPlaying) playAll();
-    document.removeEventListener('mousemove', move);
-    document.removeEventListener('touchmove', move);
-    document.removeEventListener('mouseup',   up);
-    document.removeEventListener('touchend',  up);
-  }
-  document.addEventListener('mousemove', move);
-  document.addEventListener('touchmove', move, { passive: false });
-  document.addEventListener('mouseup',   up);
-  document.addEventListener('touchend',  up);
-}
-
-function doScrub(e) {
-  const rect = scrubWrap.getBoundingClientRect();
-  const x    = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const pct  = Math.max(0, Math.min(1, x / rect.width));
-  seekAll(pct * masterDuration);
-}
-
-/* ─── Panel time labels ───────────────────────── */
-function syncPanelTimes() {
-  ANGLES.forEach(a => {
-    timeEls[a].textContent = fmtTimeMs(pvEls[a].currentTime || 0);
-  });
-}
-
-/* ─── Speed ───────────────────────────────────── */
-id('speedGroup').addEventListener('click', e => {
-  const btn = e.target.closest('.speed-btn');
-  if (!btn) return;
-  playSpeed = parseFloat(btn.dataset.speed);
-  document.querySelectorAll('.speed-btn').forEach(b => b.classList.toggle('on', b === btn));
-  ANGLES.forEach(a => pvEls[a].playbackRate = playSpeed);
-  toast(`Speed: ${btn.textContent}`);
-});
-
-/* ─── Loop ────────────────────────────────────── */
-id('btnLoop').addEventListener('click', () => {
-  looping = !looping;
-  id('btnLoop').classList.toggle('on', looping);
-  toast(looping ? 'Loop ON' : 'Loop OFF');
-});
-
-/* ─── Jump buttons ────────────────────────────── */
-id('btnStart').addEventListener('click',     () => { pauseAll(); seekAll(0); });
-id('btnEnd').addEventListener('click',       () => { pauseAll(); seekAll(masterDuration); });
-id('btnFrameBack').addEventListener('click', () => stepFrame(-1));
-id('btnFrameFwd').addEventListener('click',  () => stepFrame(1));
-id('btnPlay').addEventListener('click',      togglePlay);
-
-/* ─── Zoom ────────────────────────────────────── */
-function toggleZoom(angle) {
-  const area = id('videosArea');
-  if (zoomedPanel === angle) {
-    // un-zoom
-    zoomedPanel = null;
-    area.classList.remove('one-panel');
-    ANGLES.forEach(a => {
-      id(`panel-${a}`).classList.remove('solo');
-      id(`zoom-${a}`).classList.remove('zoomed');
-    });
-  } else {
-    zoomedPanel = angle;
-    area.classList.add('one-panel');
-    ANGLES.forEach(a => {
-      id(`panel-${a}`).classList.toggle('solo', a === angle);
-      id(`zoom-${a}`).classList.toggle('zoomed', a === angle);
-    });
-  }
-}
-
-/* ─── Frame badge ─────────────────────────────── */
-function updateFrameBadge() {
-  const t = pvEls['front'].currentTime || 0;
-  const frame = Math.round(t * FPS);
-  id('frameBadge').textContent = `frame ${frame}`;
-}
-
-/* ─── Keyboard ────────────────────────────────── */
-document.addEventListener('keydown', e => {
-  if (id('playerView').classList.contains('hidden')) return;
-  if (e.target.tagName === 'INPUT') return;
-
-  switch(e.code) {
-    case 'Space':      e.preventDefault(); togglePlay(); break;
-    case 'ArrowLeft':  e.preventDefault(); stepFrame(-1); break;
-    case 'ArrowRight': e.preventDefault(); stepFrame(1);  break;
-    case 'KeyL':       id('btnLoop').click(); break;
-    case 'Digit1':     toggleZoom('front'); break;
-    case 'Digit2':     toggleZoom('side');  break;
-    case 'Digit3':     toggleZoom('rear');  break;
-    case 'Home':       pauseAll(); seekAll(0); break;
-    case 'End':        pauseAll(); seekAll(masterDuration); break;
-  }
-});
-
-/* ─── Helpers ─────────────────────────────────── */
-function fmtTime(s) {
-  if (!isFinite(s)) return '0:00.0';
-  const m = Math.floor(s / 60);
-  const sec = (s % 60).toFixed(1).padStart(4,'0');
-  return `${m}:${sec}`;
-}
-
-function fmtTimeMs(s) {
-  if (!isFinite(s)) return '0:00.000';
-  const m   = Math.floor(s / 60);
-  const sec = (s % 60).toFixed(3).padStart(6,'0');
-  return `${m}:${sec}`;
-}
-
-function angleLabel(a) {
-  return { front: 'Front View', side: 'Side View', rear: 'Rear 45°' }[a];
-}
-
-let toastTimer;
-function toast(msg) {
-  const t = id('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
-}
+function shareReport(){toast('Share card — coming in next feature update');}
+function sColor(s){return s>=75?'#22c55e':s>=55?'#f59e0b':'#ef4444';}
+function fmtTime(s){if(!isFinite(s))return'0:00.0';return`${Math.floor(s/60)}:${(s%60).toFixed(1).padStart(4,'0')}`;}
+function fmtTimeMs(s){if(!isFinite(s))return'0:00.000';return`${Math.floor(s/60)}:${(s%60).toFixed(3).padStart(6,'0')}`;}
+function aLabel(a){return{front:'Front View',side:'Side View',rear:'Rear 45°'}[a];}
+let _tt;function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600);}
 </script>
 </body>
 </html>
