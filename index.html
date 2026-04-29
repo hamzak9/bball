@@ -107,9 +107,12 @@ header{position:relative;z-index:10;display:flex;align-items:center;justify-cont
 .btn-run-analysis:hover{background:#ea6512;transform:translateY(-1px);}
 .btn-run-analysis svg{width:14px;height:14px;stroke:#fff;flex-shrink:0;}
 .videos-area{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:#000;overflow:hidden;min-height:0;}
+.videos-area.two-panel{grid-template-columns:repeat(2,1fr);}
+.videos-area.two-panel .video-panel.hidden-panel{display:none;}
 .videos-area.one-panel{grid-template-columns:1fr;}
 .videos-area.one-panel .video-panel{display:none;}
 .videos-area.one-panel .video-panel.solo{display:flex;}
+.videos-area .video-panel.hidden-panel{display:none;}
 .video-panel{position:relative;background:#06080a;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .panel-vid{width:100%;height:100%;object-fit:contain;display:block;}
 .panel-top-bar{position:absolute;top:0;left:0;right:0;padding:8px 12px;background:linear-gradient(rgba(0,0,0,.65),transparent);display:flex;align-items:flex-start;justify-content:space-between;z-index:5;pointer-events:none;}
@@ -437,7 +440,7 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
 <div id="uploadView" class="view active">
   <p class="session-kicker">New Session</p>
   <h1 class="session-title">Upload Your Shot Footage</h1>
-  <p class="session-subtitle">Record 10+ shots from each of the 3 required angles. Position your phone as shown in each diagram.</p>
+  <p class="session-subtitle">Upload 1–3 angles to get started. More angles = richer analysis, but a single video is enough to test arc, release timing, and balance.</p>
   <div class="progress-row">
     <span class="progress-label">ANGLES LOADED</span>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -473,7 +476,7 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
     </div>
   </div>
   <div class="analyze-row">
-    <div class="analyze-info"><strong>Load all 3 angles to continue.</strong><br>Review footage in the sync player, then run AI analysis from there.</div>
+    <div class="analyze-info"><strong id="analyzeInfoTitle">Load at least 1 angle to continue.</strong><br><span id="analyzeInfoSub">More angles unlocks arc trajectory and drift overlays.</span></div>
     <button class="btn-analyze" id="btnOpenPlayer"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>OPEN PLAYER</button>
   </div>
   <div class="tips-grid">
@@ -680,7 +683,16 @@ function removeVideo(a){
 function updateProgress(){
   const n=ANGLES.filter(a=>videos[a]).length;
   $('progressFill').style.width=`${n/3*100}%`;$('progressCount').textContent=`${n} / 3`;
-  $('btnOpenPlayer').classList.toggle('active',n===3);
+  $('btnOpenPlayer').classList.toggle('active',n>=1);
+  const msgs={
+    0:['Load at least 1 angle to continue.','More angles unlocks arc trajectory and drift overlays.'],
+    1:['1 angle loaded — ready to analyze!','Add side view for arc trajectory overlay, rear for drift.'],
+    2:['2 angles loaded — good coverage.','Add the 3rd angle for full biomechanical analysis.'],
+    3:['All 3 angles loaded — full analysis ready.','Review footage in the player, then run the analysis.'],
+  };
+  const [title,sub]=msgs[n];
+  $('analyzeInfoTitle').textContent=title;
+  $('analyzeInfoSub').textContent=sub;
 }
 
 /* ══ view switching ══ */
@@ -697,19 +709,48 @@ function switchView(to){
 function goToUpload(){pauseAll();switchView('upload');}
 
 /* ══ player ══ */
-$('btnOpenPlayer').addEventListener('click',()=>{if(!ANGLES.every(a=>videos[a]))return;initPlayer();switchView('player');});
+$('btnOpenPlayer').addEventListener('click',()=>{if(!ANGLES.some(a=>videos[a]))return;initPlayer();switchView('player');});
+
+// which angle to use as playback master (first loaded)
+function primaryAngle(){ return ANGLES.find(a=>videos[a]); }
+function loadedAngles(){ return ANGLES.filter(a=>videos[a]); }
+
 function initPlayer(){
-  ANGLES.forEach(a=>{pvEls[a].src=videos[a];pvEls[a].playbackRate=playSpeed;pillEls[a].textContent=`${aLabel(a).toUpperCase()} — ${files[a]||''}`;pfileEls[a].textContent=files[a]||'';});
-  Promise.all(ANGLES.map(a=>new Promise(res=>{const v=pvEls[a];if(v.readyState>=1)return res();v.addEventListener('loadedmetadata',res,{once:true});}))).then(()=>{masterDuration=Math.min(...ANGLES.map(a=>pvEls[a].duration||Infinity));$('timeRight').textContent=fmtTime(masterDuration);seekAll(0);});
+  const loaded=loadedAngles();
+  const area=$('videosArea');
+  // set panel visibility based on what's loaded
+  ANGLES.forEach(a=>{
+    const panel=$(`panel-${a}`);
+    if(videos[a]){
+      pvEls[a].src=videos[a];pvEls[a].playbackRate=playSpeed;
+      pillEls[a].textContent=`${aLabel(a).toUpperCase()} — ${files[a]||''}`;
+      pfileEls[a].textContent=files[a]||'';
+      panel.classList.remove('hidden-panel');
+    } else {
+      panel.classList.add('hidden-panel');
+    }
+  });
+  // set grid columns
+  area.classList.remove('one-panel','two-panel');
+  if(loaded.length===1) area.classList.add('one-panel');
+  else if(loaded.length===2) area.classList.add('two-panel');
+  // for one-panel mode, mark the loaded one as solo
+  ANGLES.forEach(a=>$(`panel-${a}`).classList.remove('solo'));
+  if(loaded.length===1) $(`panel-${loaded[0]}`).classList.add('solo');
+
+  Promise.all(loaded.map(a=>new Promise(res=>{const v=pvEls[a];if(v.readyState>=1)return res();v.addEventListener('loadedmetadata',res,{once:true});}))).then(()=>{
+    masterDuration=Math.min(...loaded.map(a=>pvEls[a].duration||Infinity));
+    $('timeRight').textContent=fmtTime(masterDuration);seekAll(0);
+  });
 }
-function playAll(){ANGLES.forEach(a=>{pvEls[a].playbackRate=playSpeed;pvEls[a].play();});isPlaying=true;$('btnPlay').classList.add('playing');$('iconPlay').style.display='none';$('iconPause').style.display='';startRaf();}
-function pauseAll(){ANGLES.forEach(a=>pvEls[a].pause());isPlaying=false;$('btnPlay').classList.remove('playing');$('iconPlay').style.display='';$('iconPause').style.display='none';cancelAnimationFrame(rafId);syncTimes();if(overlayActive){resizeCanvases();drawAllOverlays();}}
-function togglePlay(){if(isPlaying)pauseAll();else{if(masterDuration&&pvEls['front'].currentTime>=masterDuration-0.05)seekAll(0);playAll();}}
-function seekAll(t){t=Math.max(0,Math.min(t,masterDuration||0));ANGLES.forEach(a=>{const v=pvEls[a];if(isFinite(v.duration)&&t<=v.duration)v.currentTime=t;});updateScrubber(t);syncTimes();}
-function stepFrame(d){pauseAll();seekAll((pvEls['front'].currentTime||0)+d*FRAME);ANGLES.forEach(a=>{const fl=flashEls[a];fl.classList.add('on');setTimeout(()=>fl.classList.remove('on'),120);});updateFB();}
-function startRaf(){cancelAnimationFrame(rafId);function tick(){const t=pvEls['front'].currentTime;updateScrubber(t);syncTimes();updateFB();if(overlayActive){resizeCanvases();drawAllOverlays();}if(masterDuration&&t>=masterDuration-0.05){looping?seekAll(0):pauseAll();return;}rafId=requestAnimationFrame(tick);}rafId=requestAnimationFrame(tick);}
+function playAll(){loadedAngles().forEach(a=>{pvEls[a].playbackRate=playSpeed;pvEls[a].play();});isPlaying=true;$('btnPlay').classList.add('playing');$('iconPlay').style.display='none';$('iconPause').style.display=''  ;startRaf();}
+function pauseAll(){loadedAngles().forEach(a=>pvEls[a].pause());isPlaying=false;$('btnPlay').classList.remove('playing');$('iconPlay').style.display='';$('iconPause').style.display='none';cancelAnimationFrame(rafId);syncTimes();if(overlayActive){resizeCanvases();drawAllOverlays();}}
+function togglePlay(){if(isPlaying)pauseAll();else{const pri=primaryAngle();if(masterDuration&&pri&&pvEls[pri].currentTime>=masterDuration-0.05)seekAll(0);playAll();}}
+function seekAll(t){t=Math.max(0,Math.min(t,masterDuration||0));loadedAngles().forEach(a=>{const v=pvEls[a];if(isFinite(v.duration)&&t<=v.duration)v.currentTime=t;});updateScrubber(t);syncTimes();}
+function stepFrame(d){pauseAll();const pri=primaryAngle();seekAll((pri?pvEls[pri].currentTime:0)+d*FRAME);loadedAngles().forEach(a=>{const fl=flashEls[a];fl.classList.add('on');setTimeout(()=>fl.classList.remove('on'),120);});updateFB();}
+function startRaf(){cancelAnimationFrame(rafId);function tick(){const pri=primaryAngle();const t=pri?pvEls[pri].currentTime:0;updateScrubber(t);syncTimes();updateFB();if(overlayActive){resizeCanvases();drawAllOverlays();}if(masterDuration&&t>=masterDuration-0.05){looping?seekAll(0):pauseAll();return;}rafId=requestAnimationFrame(tick);}rafId=requestAnimationFrame(tick);}
 function _updateScrubberBase(t){const p=masterDuration?(t/masterDuration)*100:0;$('scrubProg').style.width=`${p}%`;$('scrubThumb').style.left=`${p}%`;$('timeLeft').textContent=fmtTime(t);$('timeRight').textContent=fmtTime(masterDuration||0);}
-function syncTimes(){ANGLES.forEach(a=>{timeEls[a].textContent=fmtTimeMs(pvEls[a].currentTime||0);});}
+function syncTimes(){loadedAngles().forEach(a=>{timeEls[a].textContent=fmtTimeMs(pvEls[a].currentTime||0);});}
 function updateFB(){$('frameBadge').textContent=`frame ${Math.round((pvEls['front'].currentTime||0)*FPS)}`;}
 
 const sw=$('scrubberWrap');
@@ -717,7 +758,7 @@ sw.addEventListener('mousedown',startScrub);sw.addEventListener('touchstart',sta
 function startScrub(e){e.preventDefault();scrubbing=true;const wp=isPlaying;if(wp)pauseAll();doScrub(e);const mv=ev=>{if(scrubbing)doScrub(ev);};const up=()=>{scrubbing=false;if(wp)playAll();document.removeEventListener('mousemove',mv);document.removeEventListener('touchmove',mv);document.removeEventListener('mouseup',up);document.removeEventListener('touchend',up);};document.addEventListener('mousemove',mv);document.addEventListener('touchmove',mv,{passive:false});document.addEventListener('mouseup',up);document.addEventListener('touchend',up);}
 function doScrub(e){const r=sw.getBoundingClientRect();seekAll(Math.max(0,Math.min(1,((e.touches?e.touches[0].clientX:e.clientX)-r.left)/r.width))*masterDuration);if(overlayActive){resizeCanvases();drawAllOverlays();}}
 
-$('speedGroup').addEventListener('click',e=>{const b=e.target.closest('.speed-btn');if(!b)return;playSpeed=parseFloat(b.dataset.speed);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.toggle('on',x===b));ANGLES.forEach(a=>pvEls[a].playbackRate=playSpeed);toast(`Speed: ${b.textContent}`);});
+$('speedGroup').addEventListener('click',e=>{const b=e.target.closest('.speed-btn');if(!b)return;playSpeed=parseFloat(b.dataset.speed);document.querySelectorAll('.speed-btn').forEach(x=>x.classList.toggle('on',x===b));loadedAngles().forEach(a=>pvEls[a].playbackRate=playSpeed);toast(`Speed: ${b.textContent}`);});
 $('btnLoop').addEventListener('click',()=>{looping=!looping;$('btnLoop').classList.toggle('on',looping);toast(looping?'Loop ON':'Loop OFF');});
 $('btnStart').addEventListener('click',()=>{pauseAll();seekAll(0);});
 $('btnEnd').addEventListener('click',()=>{pauseAll();seekAll(masterDuration);});
