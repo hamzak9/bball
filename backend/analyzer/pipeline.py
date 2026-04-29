@@ -55,9 +55,11 @@ def run_analysis(
     logger.info(f"Using {arc_angle} for arc, {drift_angle} for drift, {pose_angle} for pose")
 
     # ── 1. Ball tracking ───────────────────────────────────────────────────
-    logger.info("Running ball tracker...")
+    logger.info("Auto-detecting ball color and running tracker...")
     t1 = time.time()
-    raw_detections = track_ball(primary_path, max_frames=max_frames)
+    from .ball import detect_ball_color
+    hsv_ranges = detect_ball_color(primary_path)
+    raw_detections = track_ball(primary_path, max_frames=max_frames, hsv_ranges=hsv_ranges)
     detections = smooth_trajectory(raw_detections)
     logger.info(f"Ball tracker: {len(detections)} detections in {time.time()-t1:.1f}s")
 
@@ -119,14 +121,20 @@ def _pick_angle(available: list[str], preferred: list[str]) -> str:
 
 
 def _no_shots_result(available, info, fps, n_ball, n_pose) -> dict:
-    """Return a graceful error result when no shots are detected."""
+    if n_ball == 0:
+        reason = "Ball not detected in any frame. Check that the ball is clearly visible and well-lit."
+        tip = "Try filming in better light. The ball must be visible (not blurry or hidden) for at least a few frames."
+    elif n_ball < 10:
+        reason = f"Ball only detected in {n_ball} frame(s) — not enough to reconstruct a trajectory."
+        tip = "Ensure the ball is in frame for the full shot arc, not just the release moment."
+    else:
+        reason = f"Ball detected in {n_ball} frames but no upward movement pattern found."
+        tip = "Make sure the clip includes the ball actually being shot upward, not just held or dribbled."
+
     return {
-        "status": "no_shots_detected",
-        "message": (
-            "No shot arcs were detected in the footage. "
-            "Ensure the basketball is visible (orange, well-lit) and "
-            "at least one complete shot arc appears in the video."
-        ),
+        "status":  "no_shots_detected",
+        "message": reason,
+        "tip":     tip,
         "debug": {
             "angles_available": available,
             "ball_detections":  n_ball,

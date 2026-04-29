@@ -826,7 +826,10 @@ async function runAnalysis() {
     if (apiData.status === 'no_shots_detected') {
       setTimeout(() => {
         switchView('player');
-        toast(`⚠ No shots detected — ${apiData.message}`);
+        const msg = apiData.message || 'No shots detected';
+        const tip = apiData.tip ? ` — ${apiData.tip}` : '';
+        toast(`⚠ ${msg}${tip}`);
+        console.warn('No shots debug:', apiData.debug);
       }, 600);
       return;
     }
