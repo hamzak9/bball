@@ -587,6 +587,9 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
   <div class="report-header">
     <div><p class="report-kicker">Session Report</p><h2 class="report-title" id="reportTitle">Shot Analysis</h2><p class="report-date" id="reportDate"></p></div>
     <div class="report-actions">
+      <div id="mockBanner" style="display:none;align-items:center;gap:6px;padding:7px 12px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);border-radius:7px;font-family:var(--mono);font-size:10px;color:#f59e0b;letter-spacing:.06em;">
+        ⚠ DEMO DATA — start backend to see real results
+      </div>
       <button class="btn-secondary" onclick="switchView('player')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>REVIEW FOOTAGE</button>
       <button class="btn-primary-sm" onclick="shareReport()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>SHARE REPORT</button>
     </div>
@@ -773,14 +776,123 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ══ analysis ══ */
-$('btnRunAnalysis').addEventListener('click',runAnalysis);
-function runAnalysis(){
-  pauseAll();switchView('analysis');
-  for(let i=0;i<6;i++){$(`step${i}`).classList.remove('active','done');}
-  $('aProgFill').style.width='0%';
-  [0,600,1200,1900,2600,3200].forEach((d,i)=>setTimeout(()=>{$(`step${i}`).classList.add('active');$('aProgFill').style.width=`${(i/6)*100}%`;},d));
-  [500,1100,1800,2500,3100,3700].forEach((d,i)=>setTimeout(()=>{$(`step${i}`).classList.remove('active');$(`step${i}`).classList.add('done');},d));
-  setTimeout(()=>{$('aProgFill').style.width='100%';const data=genAnalysis();setTimeout(()=>{renderReport(data);switchView('report');},400);},4000);
+const API_BASE = 'http://localhost:8000';
+
+$('btnRunAnalysis').addEventListener('click', runAnalysis);
+
+async function runAnalysis() {
+  pauseAll(); switchView('analysis');
+  for (let i=0; i<6; i++) { $(`step${i}`).classList.remove('active','done'); }
+  $('aProgFill').style.width = '0%';
+
+  // Animate steps while waiting for API
+  const stepTimings = [0, 800, 1800, 3000, 4200, 5200];
+  const stepTimers = stepTimings.map((d,i) => setTimeout(() => {
+    $(`step${i}`).classList.add('active');
+    $('aProgFill').style.width = `${((i+1)/7)*100}%`;
+  }, d));
+
+  try {
+    // Build multipart form — include only the angles that were loaded
+    const form = new FormData();
+    const angleMap = { front: videos.front, side: videos.side, rear: videos.rear };
+    let added = 0;
+    for (const [angle, url] of Object.entries(angleMap)) {
+      if (!url) continue;
+      const blob = await urlToBlob(url);
+      const ext  = (files[angle] || 'video.mp4').split('.').pop() || 'mp4';
+      form.append(angle, blob, `${angle}.${ext}`);
+      added++;
+    }
+    if (added === 0) throw new Error('No videos loaded');
+
+    // Call the backend
+    const resp = await fetch(`${API_BASE}/analyze`, { method: 'POST', body: form });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+      throw new Error(err.detail || `Server error ${resp.status}`);
+    }
+
+    const apiData = await resp.json();
+
+    // Clear step timers, mark all done
+    stepTimers.forEach(clearTimeout);
+    for (let i=0; i<6; i++) {
+      $(`step${i}`).classList.remove('active');
+      $(`step${i}`).classList.add('done');
+    }
+    $('aProgFill').style.width = '100%';
+
+    if (apiData.status === 'no_shots_detected') {
+      setTimeout(() => {
+        switchView('player');
+        toast(`⚠ No shots detected — ${apiData.message}`);
+      }, 600);
+      return;
+    }
+
+    const data = adaptApiResponse(apiData);
+    setTimeout(() => { renderReport(data); switchView('report'); }, 500);
+
+  } catch (err) {
+    stepTimers.forEach(clearTimeout);
+    console.error('Analysis error:', err);
+
+    // If backend is unreachable, fall back to mock with a clear warning
+    if (err.message.includes('fetch') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      toast('⚠ Backend offline — showing demo data');
+      for (let i=0; i<6; i++) { $(`step${i}`).classList.remove('active'); $(`step${i}`).classList.add('done'); }
+      $('aProgFill').style.width = '100%';
+      const data = genAnalysis();
+      data._isMock = true;
+      setTimeout(() => { renderReport(data); switchView('report'); }, 500);
+    } else {
+      switchView('player');
+      toast(`Analysis failed: ${err.message}`);
+    }
+  }
+}
+
+// Convert object URL → Blob (needed to append to FormData)
+async function urlToBlob(objectUrl) {
+  const resp = await fetch(objectUrl);
+  return resp.blob();
+}
+
+// Map the API response shape to what renderReport expects
+function adaptApiResponse(api) {
+  const N = api.n_shots || 0;
+
+  // Build per-shot rows from api.per_shot
+  const shots = (api.per_shot || []).map(s => ({
+    arc:     s.arc_deg     ?? api.arc?.avg_deg  ?? 45,
+    drift:   (s.drift_norm ?? 0) * 30,          // normalize to inches-ish display
+    release: s.release_score ?? (api.release?.score ?? 75) / 100,
+    balance: s.balance_score ?? (api.balance?.score ?? 75),
+    pocket:  0.5,  // pocket not tracked per-shot yet
+  }));
+
+  // Pad to at least 1 shot for display
+  while (shots.length < 1) shots.push({ arc:45, drift:0, release:0.85, balance:75, pocket:0.5 });
+
+  return {
+    shots,
+    N:           Math.max(shots.length, N),
+    overall:     api.overall ?? 60,
+    arcScore:    api.arc?.score    ?? 60,
+    driftScore:  api.drift?.score  ?? 60,
+    relScore:    api.release?.score ?? 60,
+    balScore:    api.balance?.score ?? 60,
+    pocketScore: api.pocket?.score  ?? 60,
+    arcAvg:      api.arc?.avg_deg   ?? 45,
+    arcSD:       api.arc?.std_deg   ?? 3,
+    driftAvg:    api.drift?.avg_inches ?? 1.0,
+    relAvg:      0.88,
+    relSD:       (api.release?.consistency ?? 2) / 10,
+    balAvg:      api.balance?.score ?? 70,
+    pocketSD:    (api.pocket?.std ?? 0.02),
+    _source: 'real',
+  };
 }
 
 /* ══ mock data ══ */
@@ -816,6 +928,7 @@ function genAnalysis(){
 function _renderReportCore(d){
   $('reportTitle').textContent=`${d.N}-Shot Analysis`;
   $('reportDate').textContent=new Date().toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  $('mockBanner').style.display = d._isMock ? 'flex' : 'none';
   const g=d.overall>=85?'A':d.overall>=70?'B':d.overall>=55?'C':'D';
   $('scoreGrade').textContent=g;$('scoreGrade').className=`score-grade ${g}`;
   $('scoreNumber').innerHTML=`${d.overall} <span>/ 100</span>`;
