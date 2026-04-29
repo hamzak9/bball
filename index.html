@@ -300,6 +300,64 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
 #toast.show{transform:translateX(-50%) translateY(0);}
 .file-input{display:none;}
 
+/* ═══ F3 — SHOT PIPS ON SCRUBBER ═══ */
+.scrubber-track{position:relative;}
+.shot-pip{position:absolute;top:50%;transform:translate(-50%,-50%);width:3px;height:11px;background:rgba(249,115,22,.5);border-radius:2px;cursor:pointer;transition:background .15s,height .15s;z-index:2;}
+.shot-pip:hover{background:rgba(249,115,22,1);height:16px;}
+.shot-pip.active-pip{background:var(--accent);height:16px;box-shadow:0 0 6px rgba(249,115,22,.5);}
+.shot-pip-tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border-h);border-top:1.5px solid var(--accent);padding:4px 8px;border-radius:5px;font-family:var(--mono);font-size:9px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;}
+.shot-pip:hover .shot-pip-tooltip{opacity:1;}
+
+/* ═══ HISTORY DRAWER ═══ */
+.btn-history{background:none;border:1px solid var(--border-h);color:var(--subtle);font-family:var(--mono);font-size:11px;padding:5px 12px;border-radius:5px;cursor:pointer;letter-spacing:.05em;transition:all .15s;display:flex;align-items:center;gap:6px;}
+.btn-history:hover{border-color:var(--accent);color:var(--accent);}
+.btn-history .hist-count{background:var(--accent);color:#fff;font-size:9px;padding:1px 5px;border-radius:3px;display:none;}
+.btn-history .hist-count.show{display:inline;}
+
+#historyDrawer{position:fixed;top:0;right:0;height:100vh;width:340px;background:var(--surface);border-left:1px solid var(--border);z-index:500;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;}
+#historyDrawer.open{transform:translateX(0);}
+.hist-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.hist-title{font-family:var(--cond);font-size:18px;font-weight:600;}
+.hist-close{background:none;border:1px solid var(--border-h);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.hist-close:hover{border-color:var(--accent);color:var(--accent);}
+.hist-body{flex:1;overflow-y:auto;padding:16px 20px;}
+.hist-empty{text-align:center;padding:40px 0;color:var(--muted);font-size:13px;line-height:1.7;}
+.hist-empty-icon{font-size:32px;margin-bottom:12px;}
+.hist-session{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,background .2s;position:relative;}
+.hist-session:hover{border-color:var(--accent);background:var(--accent-dim);}
+.hist-session-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.hist-session-grade{font-family:var(--cond);font-size:24px;font-weight:700;line-height:1;}
+.hist-session-score{font-family:var(--mono);font-size:20px;font-weight:500;}
+.hist-session-date{font-family:var(--mono);font-size:10px;color:var(--muted);}
+.hist-session-bars{display:flex;gap:4px;margin-top:8px;}
+.hist-bar{flex:1;height:3px;border-radius:2px;}
+.hist-session-del{position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;opacity:0;transition:opacity .15s,color .15s;padding:2px 5px;}
+.hist-session:hover .hist-session-del{opacity:1;}
+.hist-session-del:hover{color:var(--red);}
+.hist-trend{margin-top:6px;padding-top:14px;border-top:1px solid var(--border);}
+.hist-trend-label{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.07em;margin-bottom:8px;}
+#trendCanvas{display:block;width:100%;height:60px;}
+.hist-footer{padding:16px 20px;border-top:1px solid var(--border);flex-shrink:0;}
+.hist-clear{width:100%;background:none;border:1px solid var(--border-h);color:var(--muted);font-family:var(--mono);font-size:11px;padding:9px;border-radius:7px;cursor:pointer;letter-spacing:.05em;transition:all .15s;}
+.hist-clear:hover{border-color:var(--red);color:var(--red);}
+#histOverlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:499;opacity:0;pointer-events:none;transition:opacity .35s;}
+#histOverlay.show{opacity:1;pointer-events:auto;}
+
+/* ═══ SHARE CARD MODAL ═══ */
+#shareModal{position:fixed;inset:0;z-index:600;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+#shareModal.open{opacity:1;pointer-events:auto;}
+.share-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);}
+.share-inner{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:480px;overflow:hidden;}
+.share-modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);}
+.share-modal-title{font-family:var(--cond);font-size:18px;font-weight:600;}
+.share-close{background:none;border:1px solid var(--border-h);color:var(--muted);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.share-close:hover{border-color:var(--accent);color:var(--accent);}
+.share-card-preview{padding:20px;background:var(--bg);display:flex;justify-content:center;}
+#shareCardCanvas{border-radius:12px;display:block;max-width:100%;}
+.share-modal-actions{padding:16px 20px;display:flex;gap:10px;border-top:1px solid var(--border);}
+.share-modal-actions .btn-primary-sm{flex:1;justify-content:center;padding:11px;}
+.share-modal-actions .btn-secondary{flex:1;justify-content:center;}
+
 @media(max-width:900px){
   header,#uploadView,#reportView{padding-left:18px;padding-right:18px;}
   .angles-grid,.tips-grid,.metrics-grid{grid-template-columns:1fr;}
@@ -321,12 +379,59 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
   </div>
   <div class="header-right">
     <div class="header-badge" id="headerBadge">F1 — VIDEO CAPTURE</div>
+    <button class="btn-history" id="btnHistory">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg>
+      HISTORY <span class="hist-count" id="histCount">0</span>
+    </button>
     <button class="btn-ghost" id="btnBack">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
       BACK
     </button>
   </div>
 </header>
+
+<!-- HISTORY DRAWER -->
+<div id="histOverlay"></div>
+<div id="historyDrawer">
+  <div class="hist-header">
+    <div class="hist-title">Session History</div>
+    <button class="hist-close" id="histClose">✕</button>
+  </div>
+  <div class="hist-body" id="histBody">
+    <div class="hist-empty" id="histEmpty">
+      <div class="hist-empty-icon">📋</div>
+      No sessions yet.<br>Run your first analysis to see<br>your progress over time.
+    </div>
+  </div>
+  <div class="hist-trend" id="histTrend" style="padding:0 20px 0;display:none;">
+    <div class="hist-trend-label">OVERALL SCORE — TREND</div>
+    <canvas id="trendCanvas"></canvas>
+  </div>
+  <div class="hist-footer">
+    <button class="hist-clear" id="btnClearHistory">Clear all sessions</button>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div id="shareModal">
+  <div class="share-backdrop" onclick="closeShareModal()"></div>
+  <div class="share-inner">
+    <div class="share-modal-head">
+      <div class="share-modal-title">Share Your Report</div>
+      <button class="share-close" onclick="closeShareModal()">✕</button>
+    </div>
+    <div class="share-card-preview">
+      <canvas id="shareCardCanvas" width="400" height="220"></canvas>
+    </div>
+    <div class="share-modal-actions">
+      <button class="btn-primary-sm" id="btnDownloadCard">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        DOWNLOAD PNG
+      </button>
+      <button class="btn-secondary" onclick="closeShareModal()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ UPLOAD ═══ -->
 <div id="uploadView" class="view active">
@@ -430,7 +535,7 @@ td:not(:first-child){text-align:center;font-family:var(--mono);font-size:12px;}
   <div class="controls-bar">
     <div class="scrubber-row">
       <span class="time-left" id="timeLeft">0:00.0</span>
-      <div class="scrubber-wrap" id="scrubberWrap"><div class="scrubber-track"><div class="scrubber-buf" id="scrubBuf"></div><div class="scrubber-prog" id="scrubProg"></div><div class="scrubber-thumb" id="scrubThumb"></div></div></div>
+      <div class="scrubber-wrap" id="scrubberWrap"><div class="scrubber-track"><div class="scrubber-buf" id="scrubBuf"></div><div class="scrubber-prog" id="scrubProg"></div><div id="shotPips"></div><div class="scrubber-thumb" id="scrubThumb"></div></div></div>
       <span class="time-right" id="timeRight">0:00.0</span>
     </div>
     <div class="btns-row">
@@ -603,7 +708,7 @@ function togglePlay(){if(isPlaying)pauseAll();else{if(masterDuration&&pvEls['fro
 function seekAll(t){t=Math.max(0,Math.min(t,masterDuration||0));ANGLES.forEach(a=>{const v=pvEls[a];if(isFinite(v.duration)&&t<=v.duration)v.currentTime=t;});updateScrubber(t);syncTimes();}
 function stepFrame(d){pauseAll();seekAll((pvEls['front'].currentTime||0)+d*FRAME);ANGLES.forEach(a=>{const fl=flashEls[a];fl.classList.add('on');setTimeout(()=>fl.classList.remove('on'),120);});updateFB();}
 function startRaf(){cancelAnimationFrame(rafId);function tick(){const t=pvEls['front'].currentTime;updateScrubber(t);syncTimes();updateFB();if(overlayActive){resizeCanvases();drawAllOverlays();}if(masterDuration&&t>=masterDuration-0.05){looping?seekAll(0):pauseAll();return;}rafId=requestAnimationFrame(tick);}rafId=requestAnimationFrame(tick);}
-function updateScrubber(t){const p=masterDuration?(t/masterDuration)*100:0;$('scrubProg').style.width=`${p}%`;$('scrubThumb').style.left=`${p}%`;$('timeLeft').textContent=fmtTime(t);$('timeRight').textContent=fmtTime(masterDuration||0);}
+function _updateScrubberBase(t){const p=masterDuration?(t/masterDuration)*100:0;$('scrubProg').style.width=`${p}%`;$('scrubThumb').style.left=`${p}%`;$('timeLeft').textContent=fmtTime(t);$('timeRight').textContent=fmtTime(masterDuration||0);}
 function syncTimes(){ANGLES.forEach(a=>{timeEls[a].textContent=fmtTimeMs(pvEls[a].currentTime||0);});}
 function updateFB(){$('frameBadge').textContent=`frame ${Math.round((pvEls['front'].currentTime||0)*FPS)}`;}
 
@@ -1237,9 +1342,365 @@ function roundRect(ctx, x, y, w, h, r) {
 // resize on window resize
 window.addEventListener('resize', () => { if(overlayActive){ resizeCanvases(); drawAllOverlays(); } });
 
+// Single top-level renderReport — calls core, enables overlays, saves session, builds pips
 function renderReport(d) {
   _renderReportCore(d);
   enableOverlayButton(d);
+  shareData = d;
+  saveSession(d);
+  buildShotPips(d);
+}
+
+/* ══════════════════════════════════════
+   F3 — SHOT TIMELINE PIPS
+══════════════════════════════════════ */
+let shotTimestamps = []; // set after analysis: array of {t, idx, arc}
+
+function buildShotPips(d) {
+  const pips = $('shotPips');
+  pips.innerHTML = '';
+  if (!masterDuration || masterDuration <= 0) return;
+  // distribute shots evenly across duration (real version would use detected timestamps)
+  const interval = masterDuration / d.N;
+  shotTimestamps = Array.from({length: d.N}, (_, i) => ({
+    t: interval * (i + 0.42),  // offset slightly past start of each shot window
+    idx: i,
+    arc: d.shots[i].arc,
+    score: Math.round((d.shots[i].arc - 28) / (60-28) * 100)
+  }));
+  shotTimestamps.forEach((s, i) => {
+    const pct = (s.t / masterDuration) * 100;
+    const pip = document.createElement('div');
+    pip.className = 'shot-pip';
+    pip.id = `pip${i}`;
+    pip.style.left = `${pct}%`;
+    pip.title = `Shot ${i+1} — ${s.arc.toFixed(1)}°`;
+    pip.innerHTML = `<div class="shot-pip-tooltip">SHOT ${String(i+1).padStart(2,'0')} · ${s.arc.toFixed(1)}°</div>`;
+    pip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pauseAll();
+      seekAll(s.t);
+      toast(`Shot ${i+1} — ${s.arc.toFixed(1)}° arc`);
+    });
+    pips.appendChild(pip);
+  });
+}
+
+function updateShotPips() {
+  if (!shotTimestamps.length || !masterDuration) return;
+  const t = pvEls['front'].currentTime || 0;
+  const interval = masterDuration / shotTimestamps.length;
+  const activeShotIdx = Math.floor(t / interval);
+  shotTimestamps.forEach((s, i) => {
+    const pip = $(`pip${i}`);
+    if (pip) pip.classList.toggle('active-pip', i === activeShotIdx);
+  });
+}
+
+// updateScrubber includes pip update
+function updateScrubber(t) { _updateScrubberBase(t); updateShotPips(); }
+
+/* ══════════════════════════════════════
+   SESSION HISTORY (localStorage)
+══════════════════════════════════════ */
+const HIST_KEY = 'shotlab_sessions';
+
+function loadSessions() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveSessions(sessions) {
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(sessions)); } catch {}
+}
+function saveSession(d) {
+  const sessions = loadSessions();
+  sessions.unshift({
+    id: Date.now(),
+    date: new Date().toISOString(),
+    overall: d.overall,
+    grade: d.overall>=85?'A':d.overall>=70?'B':d.overall>=55?'C':'D',
+    arcScore: d.arcScore, driftScore: d.driftScore, relScore: d.relScore,
+    balScore: d.balScore, pocketScore: d.pocketScore,
+    arcAvg: d.arcAvg, N: d.N
+  });
+  saveSessions(sessions.slice(0, 50)); // keep last 50
+  updateHistoryBadge();
+}
+function deleteSession(id) {
+  saveSessions(loadSessions().filter(s => s.id !== id));
+  updateHistoryBadge();
+  renderHistoryList();
+}
+function updateHistoryBadge() {
+  const n = loadSessions().length;
+  const cnt = $('histCount');
+  cnt.textContent = n;
+  cnt.classList.toggle('show', n > 0);
+}
+
+function renderHistoryList() {
+  const sessions = loadSessions();
+  const body = $('histBody');
+  const trend = $('histTrend');
+  if (!sessions.length) {
+    body.innerHTML = `<div class="hist-empty"><div class="hist-empty-icon">📋</div>No sessions yet.<br>Run your first analysis to see<br>your progress over time.</div>`;
+    trend.style.display = 'none';
+    return;
+  }
+  body.innerHTML = sessions.map(s => {
+    const d = new Date(s.date);
+    const label = d.toLocaleDateString('en-CA', {month:'short', day:'numeric', year:'numeric'});
+    const time  = d.toLocaleTimeString('en-CA', {hour:'2-digit', minute:'2-digit'});
+    const gc = s.grade==='A'?'#22c55e':s.grade==='B'?'#84cc16':s.grade==='C'?'#f59e0b':'#ef4444';
+    const bars = [s.arcScore,s.driftScore,s.relScore,s.balScore,s.pocketScore]
+      .map(v=>`<div class="hist-bar" style="background:${sColor(v)}66;flex-basis:${v/100*100}%"></div>`).join('');
+    return `<div class="hist-session" onclick="loadHistorySession(${s.id})">
+      <div class="hist-session-top">
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span class="hist-session-grade" style="color:${gc}">${s.grade}</span>
+          <span class="hist-session-score" style="color:${gc}">${s.overall}<span style="font-size:12px;color:var(--muted)">/100</span></span>
+        </div>
+        <div style="text-align:right">
+          <div class="hist-session-date">${label}</div>
+          <div class="hist-session-date">${time}</div>
+        </div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--muted);margin-bottom:5px">${s.N} shots · avg ${s.arcAvg.toFixed(1)}° arc</div>
+      <div class="hist-session-bars">${bars}</div>
+      <button class="hist-session-del" onclick="event.stopPropagation();deleteSession(${s.id})">✕</button>
+    </div>`;
+  }).join('');
+
+  // trend chart
+  if (sessions.length > 1) {
+    trend.style.display = 'block';
+    setTimeout(() => drawTrendChart(sessions), 50);
+  } else {
+    trend.style.display = 'none';
+  }
+}
+
+function drawTrendChart(sessions) {
+  const canvas = $('trendCanvas');
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 280;
+  canvas.width = W; canvas.height = 60;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,60);
+
+  const scores = [...sessions].reverse().map(s => s.overall);
+  const minS = Math.min(...scores) - 5, maxS = Math.max(...scores) + 5;
+  const xStep = W / (scores.length - 1 || 1);
+
+  // gradient fill
+  const grad = ctx.createLinearGradient(0,0,0,60);
+  grad.addColorStop(0,'rgba(249,115,22,.2)');
+  grad.addColorStop(1,'rgba(249,115,22,0)');
+
+  const pts = scores.map((s,i) => [i*xStep, 60 - ((s-minS)/(maxS-minS))*50 - 5]);
+
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0?ctx.moveTo(...p):ctx.lineTo(...p));
+  ctx.lineTo(pts[pts.length-1][0], 60);
+  ctx.lineTo(0, 60);
+  ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+
+  ctx.strokeStyle = 'rgba(249,115,22,.7)'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath();
+  pts.forEach((p,i) => i===0?ctx.moveTo(...p):ctx.lineTo(...p));
+  ctx.stroke();
+
+  // dots
+  pts.forEach(([px,py],i) => {
+    ctx.beginPath(); ctx.arc(px,py,3,0,Math.PI*2);
+    ctx.fillStyle = i===pts.length-1 ? '#f97316' : 'rgba(249,115,22,.5)'; ctx.fill();
+  });
+}
+
+function loadHistorySession(id) {
+  // just show what we have — in real app would reload the video session
+  toast('Session view — video files not re-loadable (local only)');
+  closeHistory();
+}
+
+// History drawer open/close
+$('btnHistory').addEventListener('click', openHistory);
+$('histClose').addEventListener('click', closeHistory);
+$('histOverlay').addEventListener('click', closeHistory);
+$('btnClearHistory').addEventListener('click', () => {
+  if (confirm('Clear all session history?')) {
+    saveSessions([]);
+    updateHistoryBadge();
+    renderHistoryList();
+    toast('History cleared');
+  }
+});
+
+function openHistory() {
+  renderHistoryList();
+  $('historyDrawer').classList.add('open');
+  $('histOverlay').classList.add('show');
+}
+function closeHistory() {
+  $('historyDrawer').classList.remove('open');
+  $('histOverlay').classList.remove('show');
+}
+
+// init badge on load
+updateHistoryBadge();
+
+/* ══════════════════════════════════════
+   SHARE CARD — Canvas PNG
+══════════════════════════════════════ */
+let shareData = null;
+
+function shareReport() {
+  if (!shareData) { toast('Run analysis first'); return; }
+  drawShareCard(shareData);
+  $('shareModal').classList.add('open');
+}
+function closeShareModal() { $('shareModal').classList.remove('open'); }
+
+$('btnDownloadCard').addEventListener('click', () => {
+  const canvas = $('shareCardCanvas');
+  const link = document.createElement('a');
+  link.download = `shotlab-report-${Date.now()}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+  toast('Shot report downloaded!');
+});
+
+function drawShareCard(d) {
+  const canvas = $('shareCardCanvas');
+  const W = 400, H = 220;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // background
+  ctx.fillStyle = '#0c0d0f';
+  ctx.fillRect(0,0,W,H);
+
+  // noise texture via ImageData (subtle)
+  const imgData = ctx.createImageData(W,H);
+  for (let i=0; i<imgData.data.length; i+=4) {
+    const n = (Math.random()*8)|0;
+    imgData.data[i]=imgData.data[i+1]=imgData.data[i+2]=n;
+    imgData.data[i+3]=255;
+  }
+  // blend
+  const offscreen = document.createElement('canvas');
+  offscreen.width=W; offscreen.height=H;
+  const octx = offscreen.getContext('2d');
+  octx.putImageData(imgData,0,0);
+  ctx.globalAlpha=0.04; ctx.drawImage(offscreen,0,0); ctx.globalAlpha=1;
+
+  // top accent bar
+  const barGrad = ctx.createLinearGradient(0,0,W,0);
+  barGrad.addColorStop(0,'transparent');
+  barGrad.addColorStop(0.3,'#f97316');
+  barGrad.addColorStop(0.7,'#f97316');
+  barGrad.addColorStop(1,'transparent');
+  ctx.fillStyle=barGrad; ctx.fillRect(0,0,W,2);
+
+  // left panel — grade
+  const grade = d.overall>=85?'A':d.overall>=70?'B':d.overall>=55?'C':'D';
+  const gradeColor = grade==='A'?'#22c55e':grade==='B'?'#84cc16':grade==='C'?'#f59e0b':'#ef4444';
+
+  // grade glow
+  const glow = ctx.createRadialGradient(68,H/2,0,68,H/2,70);
+  glow.addColorStop(0,gradeColor+'22');
+  glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow; ctx.fillRect(0,0,140,H);
+
+  ctx.fillStyle=gradeColor;
+  ctx.font='bold 72px "Barlow Condensed",sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText(grade, 68, H/2+24);
+
+  ctx.fillStyle='rgba(255,255,255,0.25)';
+  ctx.font='10px "DM Mono",monospace';
+  ctx.letterSpacing='0.1em';
+  ctx.fillText('GRADE', 68, H/2+42);
+
+  // divider
+  ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(136,20); ctx.lineTo(136,H-20); ctx.stroke();
+
+  // right panel — score + metrics
+  const rx = 156;
+
+  // logo
+  ctx.fillStyle='#f97316';
+  ctx.font='bold 12px "Barlow Condensed",sans-serif';
+  ctx.textAlign='left';
+  ctx.fillText('SHOT', rx, 28);
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.fillText('LAB', rx+34, 28);
+
+  ctx.fillStyle='rgba(255,255,255,0.2)';
+  ctx.font='9px "DM Mono",monospace';
+  ctx.fillText('AI SHOOTING COACH', rx, 43);
+
+  // score
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.font='bold 40px "Barlow Condensed",sans-serif';
+  ctx.fillText(String(d.overall), rx, 95);
+  ctx.fillStyle='rgba(255,255,255,0.3)';
+  ctx.font='18px "Barlow Condensed",sans-serif';
+  ctx.fillText('/ 100', rx+52, 95);
+
+  // shot info
+  ctx.fillStyle='rgba(255,255,255,0.4)';
+  ctx.font='10px "DM Mono",monospace';
+  const dateStr = new Date().toLocaleDateString('en-CA',{month:'short',day:'numeric',year:'numeric'});
+  ctx.fillText(`${d.N} SHOTS · ${d.arcAvg.toFixed(1)}° AVG ARC · ${dateStr}`, rx, 112);
+
+  // 5 metric mini bars
+  const mets = [
+    {k:'ARC',v:d.arcScore},{k:'DRIFT',v:d.driftScore},{k:'RELEASE',v:d.relScore},
+    {k:'BALANCE',v:d.balScore},{k:'POCKET',v:d.pocketScore}
+  ];
+  const barY = 132, barH = 4, barW = 36, barGap = 48;
+  mets.forEach((m, i) => {
+    const bx = rx + i*barGap;
+    // track
+    ctx.fillStyle='rgba(255,255,255,0.08)';
+    roundRectFill(ctx, bx, barY, barW, barH, 2);
+    // fill
+    const fillW = (m.v/100)*barW;
+    ctx.fillStyle = sColor(m.v);
+    roundRectFill(ctx, bx, barY, fillW, barH, 2);
+    // label
+    ctx.fillStyle='rgba(255,255,255,0.3)';
+    ctx.font='8px "DM Mono",monospace';
+    ctx.textAlign='left';
+    ctx.fillText(m.k, bx, barY+16);
+    ctx.fillStyle = sColor(m.v);
+    ctx.font='bold 9px "DM Mono",monospace';
+    ctx.fillText(String(m.v), bx, barY+27);
+  });
+
+  // bottom branding
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.font='9px "DM Mono",monospace';
+  ctx.textAlign='right';
+  ctx.fillText('shotlab.app', W-16, H-12);
+
+  // bottom border
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,H-1); ctx.lineTo(W,H-1); ctx.stroke();
+}
+
+function roundRectFill(ctx, x, y, w, h, r) {
+  if (w <= 0) return;
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath(); ctx.fill();
 }
 </script>
 </body>
