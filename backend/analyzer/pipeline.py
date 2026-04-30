@@ -80,7 +80,7 @@ def run_analysis(
 
     # ── 4. Metrics ─────────────────────────────────────────────────────────
     logger.info("Computing metrics...")
-    metrics = aggregate_metrics(shots, poses, fps)
+    metrics = aggregate_metrics(shots, poses, fps, info=info)
 
     # Add drift from front view if we have it separately
     if drift_angle != arc_angle and drift_angle in video_paths:

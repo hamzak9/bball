@@ -36,15 +36,11 @@ _FALLBACK_RANGES = [
 ]
 
 
-def detect_ball_color(video_path: str, sample_frames: int = 30) -> list[tuple]:
+def detect_ball_color(video_path: str, sample_pairs: int = 40) -> list[tuple]:
     """
-    Sample frames from the video and detect the dominant ball color.
-    Returns a list of HSV (lo, hi) range tuples to use for masking.
-
-    Works by:
-    1. Finding circular blobs across sampled frames
-    2. Sampling their dominant HSV hue
-    3. Building a tight HSV range around that hue
+    Detect ball color using frame differencing.
+    The ball MOVES between frames; background doesn't.
+    Sample hue only from moving circular regions.
     """
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
@@ -53,72 +49,78 @@ def detect_ball_color(video_path: str, sample_frames: int = 30) -> list[tuple]:
     n_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     height   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     width    = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    step     = max(1, n_frames // sample_frames)
+    step     = max(1, n_frames // sample_pairs)
 
     hue_samples = []
 
-    for i in range(sample_frames):
+    for i in range(sample_pairs - 1):
         cap.set(cv2.CAP_PROP_POS_FRAMES, i * step)
-        ret, frame = cap.read()
-        if not ret:
-            break
+        ret1, frame1 = cap.read()
+        cap.set(cv2.CAP_PROP_POS_FRAMES, i * step + 2)
+        ret2, frame2 = cap.read()
+        if not ret1 or not ret2:
+            continue
 
         if height > 720:
-            frame = cv2.resize(frame, (int(width * 720 / height), 720))
+            sc = 720 / height
+            frame1 = cv2.resize(frame1, (int(width*sc), 720))
+            frame2 = cv2.resize(frame2, (int(width*sc), 720))
 
-        h, w = frame.shape[:2]
-        gray    = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray, (9, 9), 2)
+        h, w = frame1.shape[:2]
 
-        min_r = max(8, int(min(h, w) * 0.015))
-        max_r = min(100, int(min(h, w) * 0.12))
+        # Motion mask: only where pixels changed
+        diff = cv2.absdiff(
+            cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY),
+            cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY),
+        )
+        _, motion_mask = cv2.threshold(diff, 18, 255, cv2.THRESH_BINARY)
+        motion_mask = cv2.dilate(motion_mask, np.ones((5,5), np.uint8), iterations=2)
+        if motion_mask.sum() < 300:
+            continue
+
+        # Find circles in the difference image
+        blurred = cv2.GaussianBlur(diff, (9, 9), 2)
+        min_r = max(6, int(min(h, w) * 0.012))
+        max_r = min(80, int(min(h, w) * 0.10))
 
         circles = cv2.HoughCircles(
-            blurred, cv2.HOUGH_GRADIENT,
-            dp=1.2, minDist=min_r * 3,
-            param1=60, param2=22,
-            minRadius=min_r, maxRadius=max_r,
+            blurred, cv2.HOUGH_GRADIENT, dp=1.2, minDist=min_r*2,
+            param1=40, param2=10, minRadius=min_r, maxRadius=max_r,
         )
         if circles is None:
             continue
 
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        hsv = cv2.cvtColor(frame1, cv2.COLOR_BGR2HSV)
         for (cx, cy, r) in np.round(circles[0]).astype(int):
-            mask = np.zeros((h, w), dtype=np.uint8)
-            cv2.circle(mask, (cx, cy), max(2, r - 2), 255, -1)
-            pixels = hsv[mask > 0]
-            if len(pixels) == 0:
+            circ_mask = np.zeros((h, w), dtype=np.uint8)
+            cv2.circle(circ_mask, (cx, cy), r, 255, -1)
+
+            # Must overlap significantly with motion
+            motion_pct = cv2.bitwise_and(motion_mask, circ_mask).sum() / 255
+            if motion_pct < 0.25 * np.pi * r * r:
                 continue
-            # Filter out near-white and near-black (court markings, lines)
-            sat = pixels[:, 1]
-            val = pixels[:, 2]
-            colored = pixels[(sat > 60) & (val > 60)]
-            if len(colored) < 10:
+
+            pixels = hsv[circ_mask > 0]
+            colored = pixels[(pixels[:,1] > 50) & (pixels[:,2] > 50)]
+            if len(colored) < 8:
                 continue
             hue_samples.extend(colored[:, 0].tolist())
 
     cap.release()
 
-    if len(hue_samples) < 20:
-        logger.warning("Ball color auto-detect failed — using fallback (orange+blue)")
+    if len(hue_samples) < 15:
+        logger.warning(f"Color auto-detect insufficient samples ({len(hue_samples)}) — using fallback")
         return _FALLBACK_RANGES
 
-    # Find dominant hue cluster via histogram
-    hue_arr = np.array(hue_samples, dtype=np.float32)
     hist = np.zeros(180, dtype=np.float32)
-    for h in hue_arr:
-        hist[int(h) % 180] += 1
-
-    # Smooth histogram
+    for hv in hue_samples:
+        hist[int(hv) % 180] += 1
     hist = np.convolve(hist, np.ones(7) / 7, mode='same')
-
     dominant_hue = int(np.argmax(hist))
-    logger.info(f"Auto-detected ball hue: {dominant_hue} (0=red, 30=yellow, 60=green, 120=blue, 150=purple)")
-
+    logger.info(f"Auto-detected ball hue: {dominant_hue}  ({len(hue_samples)} samples)")
     hsv_ranges = _hue_to_ranges(dominant_hue)
-    logger.info(f"Using HSV ranges: {hsv_ranges}")
+    logger.info(f"HSV ranges: {hsv_ranges}")
     return hsv_ranges
-
 
 def _hue_to_ranges(hue: int) -> list[tuple]:
     """Build HSV (lo, hi) ranges for a given dominant hue."""

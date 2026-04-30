@@ -1,0 +1,14 @@
+{
+  "test_45deg.mp4": {
+    "error": "Could not download pose model: HTTP Error 403: Forbidden\nManual fix: download the file from\n  https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task\nand save it to\n  /home/claude/bball/backend/pose_landmarker.task"
+  },
+  "test_48deg.mp4": {
+    "error": "Could not download pose model: HTTP Error 403: Forbidden\nManual fix: download the file from\n  https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task\nand save it to\n  /home/claude/bball/backend/pose_landmarker.task"
+  },
+  "test_30deg.mp4": {
+    "error": "Could not download pose model: HTTP Error 403: Forbidden\nManual fix: download the file from\n  https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task\nand save it to\n  /home/claude/bball/backend/pose_landmarker.task"
+  },
+  "test_65deg.mp4": {
+    "error": "Could not download pose model: HTTP Error 403: Forbidden\nManual fix: download the file from\n  https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task\nand save it to\n  /home/claude/bball/backend/pose_landmarker.task"
+  }
+}

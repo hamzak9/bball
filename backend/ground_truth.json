@@ -1,0 +1,54 @@
+{
+  "test_45deg.mp4": {
+    "target_angle": 45.0,
+    "description": "Good form \u2014 optimal arc",
+    "per_shot_angles": [
+      45.46,
+      43.44,
+      46.13,
+      46.41,
+      42.07
+    ],
+    "mean_angle": 44.7,
+    "n_shots": 5
+  },
+  "test_48deg.mp4": {
+    "target_angle": 48.0,
+    "description": "Slightly high \u2014 still good",
+    "per_shot_angles": [
+      48.46,
+      46.44,
+      49.13,
+      49.41,
+      45.07
+    ],
+    "mean_angle": 47.7,
+    "n_shots": 5
+  },
+  "test_30deg.mp4": {
+    "target_angle": 30.0,
+    "description": "Flat arc \u2014 bad form",
+    "per_shot_angles": [
+      30.46,
+      28.44,
+      31.13,
+      31.41,
+      27.07
+    ],
+    "mean_angle": 29.7,
+    "n_shots": 5
+  },
+  "test_65deg.mp4": {
+    "target_angle": 65.0,
+    "description": "Very high \u2014 like the bug we saw",
+    "per_shot_angles": [
+      65.46,
+      63.44,
+      66.13,
+      66.41,
+      62.07
+    ],
+    "mean_angle": 64.7,
+    "n_shots": 5
+  }
+}

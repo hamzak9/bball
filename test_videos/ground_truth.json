@@ -1,0 +1,113 @@
+{
+  "test_45deg_5shots.mp4": {
+    "file": "/home/claude/bball/test_videos/test_45deg_5shots.mp4",
+    "n_shots": 5,
+    "target_angle": 45.0,
+    "actual_angles": [
+      45.0,
+      45.0,
+      45.0,
+      45.0,
+      45.0
+    ],
+    "avg_angle": 45.0,
+    "std_angle": 0.0,
+    "drift_inches": 0.0,
+    "ball_color": "blue (BGR 220,130,40)",
+    "view": "side",
+    "fps": 60,
+    "resolution": "1280x720",
+    "release_px": [
+      234,
+      385
+    ],
+    "hoop_px": [
+      1024,
+      259
+    ]
+  },
+  "test_52deg_5shots.mp4": {
+    "file": "/home/claude/bball/test_videos/test_52deg_5shots.mp4",
+    "n_shots": 5,
+    "target_angle": 52.0,
+    "actual_angles": [
+      52.0,
+      52.0,
+      52.0,
+      52.0,
+      52.0
+    ],
+    "avg_angle": 52.0,
+    "std_angle": 0.0,
+    "drift_inches": 0.0,
+    "ball_color": "blue (BGR 220,130,40)",
+    "view": "side",
+    "fps": 60,
+    "resolution": "1280x720",
+    "release_px": [
+      234,
+      385
+    ],
+    "hoop_px": [
+      1024,
+      259
+    ]
+  },
+  "test_38deg_5shots.mp4": {
+    "file": "/home/claude/bball/test_videos/test_38deg_5shots.mp4",
+    "n_shots": 5,
+    "target_angle": 38.0,
+    "actual_angles": [
+      38.0,
+      38.0,
+      38.0,
+      38.0,
+      38.0
+    ],
+    "avg_angle": 38.0,
+    "std_angle": 0.0,
+    "drift_inches": 0.0,
+    "ball_color": "blue (BGR 220,130,40)",
+    "view": "side",
+    "fps": 60,
+    "resolution": "1280x720",
+    "release_px": [
+      234,
+      385
+    ],
+    "hoop_px": [
+      1024,
+      259
+    ]
+  },
+  "test_45deg_noisy_8shots.mp4": {
+    "file": "/home/claude/bball/test_videos/test_45deg_noisy_8shots.mp4",
+    "n_shots": 8,
+    "target_angle": 45.0,
+    "actual_angles": [
+      46.99,
+      44.45,
+      47.59,
+      51.09,
+      44.06,
+      44.06,
+      51.32,
+      48.07
+    ],
+    "avg_angle": 47.2,
+    "std_angle": 2.75,
+    "drift_inches": 0.0,
+    "ball_color": "blue (BGR 220,130,40)",
+    "view": "side",
+    "fps": 60,
+    "resolution": "1280x720",
+    "release_px": [
+      234,
+      385
+    ],
+    "hoop_px": [
+      1024,
+      259
+    ]
+  }
+}

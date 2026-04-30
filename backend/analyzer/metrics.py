@@ -21,10 +21,21 @@ from .pose import PoseFrame, angle_between
 
 # ─── Arc angle ──────────────────────────────────────────────────────────────
 
-def compute_arc_angle(shot: ShotEvent) -> Optional[float]:
+def compute_arc_angle(
+    shot: ShotEvent,
+    frame_width: int = 1920,
+    frame_height: int = 1080,
+) -> Optional[float]:
     """
     Fit a parabola to the ball trajectory and return the launch angle in degrees.
-    Uses the normalized (cx, cy) coordinates — works for side-view footage.
+
+    Key insight: ball detection often starts mid-arc (ball near peak) because
+    it's occluded by the shooter near release. The parabola curvature is still
+    correct, but evaluating slope at cx[0] gives wrong angle.
+
+    Fix: if we have the release pose (wrist landmark), evaluate the parabola
+    slope at the wrist x position — that's the actual release point.
+    If no pose, extrapolate leftward to the edge of the detected range.
     """
     cx = np.array(shot.ball_cx)
     cy = np.array(shot.ball_cy)
@@ -32,32 +43,38 @@ def compute_arc_angle(shot: ShotEvent) -> Optional[float]:
     if len(cx) < 5:
         return None
 
-    # In image coords: cy decreases as ball rises (0=top)
-    # Flip cy so that "up" is positive
-    cy_up = -cy
+    if cy.max() - cy.min() < 0.04:
+        return None
+
+    # Aspect ratio: cx spans frame_width pixels, cy spans frame_height pixels
+    aspect = frame_width / frame_height  # e.g. 16/9 ≈ 1.78
+    cy_up  = 1.0 - cy   # flip: up is positive
 
     try:
-        # Fit quadratic: y = a*x^2 + b*x + c
         coeffs = np.polyfit(cx, cy_up, 2)
         a, b, _ = coeffs
 
-        # Derivative at the first point gives launch angle
-        x0 = cx[0]
-        dy_dx = 2 * a * x0 + b
+        # Determine release x — use pose wrist if available, else leftmost detection
+        release_x_norm = cx[0]  # default
 
-        # Convert slope to angle
-        # Scale factor: aspect ratio of frame (cy is normalized by height, cx by width)
-        # For a 16:9 frame: 1 unit cx = 16/9 * 1 unit cy in real space
-        # We estimate this from the trajectory span
-        cx_span = cx[-1] - cx[0]
-        cy_span = cy_up[-1] - cy_up[0]
+        if shot.release_pose is not None:
+            wrist = (
+                shot.release_pose.get_xy("right_wrist") or
+                shot.release_pose.get_xy("left_wrist")
+            )
+            if wrist is not None:
+                # Wrist x is the true release x — evaluate parabola here
+                release_x_norm = wrist[0]
 
-        angle_deg = float(np.degrees(np.arctan(abs(dy_dx))))
+        # Evaluate slope at release x, corrected for aspect ratio
+        slope_norm = 2 * a * release_x_norm + b
+        slope_real = slope_norm / aspect   # convert to real-world ratio
 
-        # Sanity-check range
-        if not (15 < angle_deg < 75):
+        angle_deg = float(np.degrees(np.arctan(abs(slope_real))))
+
+        if not (10 < angle_deg < 80):
             return None
-        return angle_deg
+        return round(angle_deg, 1)
 
     except (np.linalg.LinAlgError, ValueError):
         return None
@@ -274,7 +291,7 @@ def compute_pocket_consistency(shots: list[ShotEvent]) -> dict:
 
 # ─── Aggregate across shots ──────────────────────────────────────────────────
 
-def aggregate_metrics(shots: list[ShotEvent], poses: list[PoseFrame], fps: float) -> dict:
+def aggregate_metrics(shots: list[ShotEvent], poses: list[PoseFrame], fps: float, info: dict = None) -> dict:
     """
     Compute all 5 metrics across all detected shots.
     Returns the final metrics dict that the API returns to the frontend.
@@ -288,7 +305,7 @@ def aggregate_metrics(shots: list[ShotEvent], poses: list[PoseFrame], fps: float
     per_shot = []
 
     for i, shot in enumerate(shots):
-        arc   = compute_arc_angle(shot)
+        arc   = compute_arc_angle(shot, frame_width=info.get('width',1920), frame_height=info.get('height',1080))
         drift = compute_drift(shot)
         bal   = compute_balance(shot)
 
